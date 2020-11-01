@@ -1,0 +1,21 @@
+{
+  "name": "advecs/billing",
+  "type": "library",
+  "description": "Advecs, Billing",
+  "keywords": [
+    "advecs"
+  ],
+  "license": "",
+  "require": {
+    "php": ">=7.2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Advecs\\": "src/",
+      "Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  }
+}
