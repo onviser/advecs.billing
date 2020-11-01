@@ -5,27 +5,36 @@ namespace Advecs\Billing;
 use Advecs\Billing\Account\Account;
 use Advecs\Billing\Posting\Posting;
 
-interface BillingInterface
+class Billing implements BillingInterface
 {
     /**
      * @param Account $hAccount
      * @return float
      */
-    public function getBalance(Account $hAccount): float;
+    public function getBalance(Account $hAccount): float
+    {
+        return 0;
+    }
 
     /**
      * @param Account $hAccount
      * @param Posting $hPosting
      * @return bool
      */
-    public function moneyIn(Account $hAccount, Posting $hPosting): bool;
+    public function moneyIn(Account $hAccount, Posting $hPosting): bool
+    {
+        return false;
+    }
 
     /**
      * @param Account $hAccount
      * @param Posting $hPosting
      * @return bool
      */
-    public function moneyOut(Account $hAccount, Posting $hPosting): bool;
+    public function moneyOut(Account $hAccount, Posting $hPosting): bool
+    {
+        return false;
+    }
 
     /**
      * @param Account $hAccountFrom
@@ -33,5 +42,8 @@ interface BillingInterface
      * @param Posting $hPosting
      * @return bool
      */
-    public function moneyTransfer(Account $hAccountFrom, Account $hAccountTo, Posting $hPosting): bool;
+    public function moneyTransfer(Account $hAccountFrom, Account $hAccountTo, Posting $hPosting): bool
+    {
+        return false;
+    }
 }

@@ -1,11 +1,10 @@
 {
   "name": "advecs/billing",
   "type": "library",
-  "description": "Advecs, Billing",
+  "description": "Billing",
   "keywords": [
     "advecs"
   ],
-  "license": "",
   "require": {
     "php": ">=7.2.0"
   },
