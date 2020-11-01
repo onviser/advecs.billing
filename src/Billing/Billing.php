@@ -4,9 +4,13 @@ namespace Advecs\Billing;
 
 use Advecs\Billing\Account\Account;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\Storage\StorageInterface;
 
 class Billing implements BillingInterface
 {
+    /** @var StorageInterface */
+    protected $hStorage;
+
     /**
      * @param Account $hAccount
      * @return float
@@ -45,5 +49,15 @@ class Billing implements BillingInterface
     public function moneyTransfer(Account $hAccountFrom, Account $hAccountTo, Posting $hPosting): bool
     {
         return false;
+    }
+
+    /**
+     * @param StorageInterface $hStorage
+     * @return $this
+     */
+    public function setStorage(StorageInterface $hStorage): self
+    {
+        $this->hStorage = $hStorage;
+        return $this;
     }
 }
