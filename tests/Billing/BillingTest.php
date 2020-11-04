@@ -13,17 +13,22 @@ class BillingTest extends TestCase
     const ID_FIRM_1 = 10;
     const ID_FIRM_2 = 20;
 
-    /** @var Billing */
-    protected $hBilling;
-
     /** @return bool */
     public function testUserAdd(): bool
     {
-        $this->assertEquals(9.42, $this->hBilling->getUserBalanceRuble(self::ID_USER_1));
-        $this->assertEquals(0.31, $this->hBilling->getUserBalanceBonus(self::ID_USER_1));
+        $hBilling = $this->getBilling();
 
-        $this->assertEquals(3.15, $this->hBilling->getUserBalanceRuble(self::ID_USER_2));
-        $this->assertEquals(0, $this->hBilling->getUserBalanceBonus(self::ID_USER_2));
+        // пользователь 1
+        $hBilling->addUserRuble(self::ID_USER_1, 3.14, 'пополнение счета');
+        $hBilling->addUserRuble(self::ID_USER_1, 6.28, 'еще одно пополнение счета');
+        $hBilling->addUserBonus(self::ID_USER_1, 0.31, 'зачисление бонусов');
+        $this->assertEquals(9.42, $hBilling->getUserBalanceRuble(self::ID_USER_1));
+        $this->assertEquals(0.31, $hBilling->getUserBalanceBonus(self::ID_USER_1));
+
+        // пользователь 2
+        $hBilling->addUserRuble(self::ID_USER_2, 3.15, 'пополнение счета');
+        $this->assertEquals(3.15, $hBilling->getUserBalanceRuble(self::ID_USER_2));
+        $this->assertEquals(0, $hBilling->getUserBalanceBonus(self::ID_USER_2));
 
         return true;
     }
@@ -31,13 +36,18 @@ class BillingTest extends TestCase
     /** @return bool */
     public function testUserTransfer(): bool
     {
-        $this->hBilling->transferUserRuble(self::ID_USER_1, self::ID_USER_2, 1.1, 'перевод средств');
-        $this->assertEquals(8.32, $this->hBilling->getUserBalanceRuble(self::ID_USER_1));
-        $this->assertEquals(4.25, $this->hBilling->getUserBalanceRuble(self::ID_USER_2));
+        $hBilling = $this->getBilling();
 
-        $this->hBilling->transferUserRuble(self::ID_USER_2, self::ID_USER_1, 0.03, 'перевод средств обратно');
-        $this->assertEquals(8.35, $this->hBilling->getUserBalanceRuble(self::ID_USER_1));
-        $this->assertEquals(4.22, $this->hBilling->getUserBalanceRuble(self::ID_USER_2));
+        $hBilling->addUserRuble(self::ID_USER_1, 10, 'пополнение счета 1');
+        $hBilling->addUserRuble(self::ID_USER_2, 20, 'пополнение счета 2');
+
+        $hBilling->transferUserRuble(self::ID_USER_1, self::ID_USER_2, 2.5, 'перевод средств');
+        $this->assertEquals(7.50, $hBilling->getUserBalanceRuble(self::ID_USER_1));
+        $this->assertEquals(22.5, $hBilling->getUserBalanceRuble(self::ID_USER_2));
+
+        $hBilling->transferUserRuble(self::ID_USER_2, self::ID_USER_1, 1.5, 'перевод средств обратно');
+        $this->assertEquals(9, $hBilling->getUserBalanceRuble(self::ID_USER_1));
+        $this->assertEquals(21, $hBilling->getUserBalanceRuble(self::ID_USER_2));
 
         return true;
     }
@@ -45,35 +55,44 @@ class BillingTest extends TestCase
     /** @return bool */
     public function testFirmAdd(): bool
     {
-        $this->assertEquals(0, $this->hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
-        $this->hBilling->addFirmRuble(self::ID_FIRM_1, 7.77);
-        $this->assertEquals(7.77, $this->hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
-        $this->hBilling->addFirmRuble(self::ID_FIRM_1, 2.23);
-        $this->assertEquals(10, $this->hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
+        $hBilling = $this->getBilling();
+        $this->assertEquals(0, $hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
 
-        $this->assertEquals(0, $this->hBilling->getFirmBalanceRuble(self::ID_FIRM_2));
-        $this->hBilling->addFirmRuble(self::ID_FIRM_2, 10000);
-        $this->assertEquals(10000, $this->hBilling->getFirmBalanceRuble(self::ID_FIRM_2));
+        $hBilling->addFirmRuble(self::ID_FIRM_1, 7000);
+        $this->assertEquals(7000, $hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
+
+        $hBilling->addFirmRuble(self::ID_FIRM_1, 3000);
+        $this->assertEquals(10000, $hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
+
+        $this->assertEquals(0, $hBilling->getFirmBalanceRuble(self::ID_FIRM_2));
+        $hBilling->addFirmRuble(self::ID_FIRM_2, 5000);
+        $this->assertEquals(5000, $hBilling->getFirmBalanceRuble(self::ID_FIRM_2));
 
         return true;
     }
 
-    public function setUp(): void
+    /** @return bool */
+    public function testFirmTransfer(): bool
     {
-        $this->hBilling = (new Billing())
-            ->setStorage(new MemoryStorage());
+        $hBilling = $this->getBilling();
+        $hBilling->addFirmRuble(self::ID_FIRM_1, 5000);
+        $hBilling->addFirmRuble(self::ID_FIRM_2, 1000);
 
-        // пользователь 1
-        $this->hBilling->addUserRuble(self::ID_USER_1, 3.14, 'пополнение счета');
-        $this->hBilling->addUserRuble(self::ID_USER_1, 6.28, 'еще одно пополнение счета');
-        $this->hBilling->addUserBonus(self::ID_USER_1, 0.31, 'зачисление бонусов');
+        $hBilling->transferFirmRuble(self::ID_FIRM_1, self::ID_FIRM_2, 500, 'перевод средств между фирмами');
+        $this->assertEquals(4500.00, $hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
+        $this->assertEquals(1500, $hBilling->getFirmBalanceRuble(self::ID_FIRM_2));
 
-        // пользователь 2
-        $this->hBilling->addUserRuble(self::ID_USER_2, 3.15, 'пополнение счета');
+        $hBilling->transferFirmRuble(self::ID_FIRM_2, self::ID_FIRM_1, 100, 'перевод средств между фирмами обратно');
+        $this->assertEquals(4600, $hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
+        $this->assertEquals(1400, $hBilling->getFirmBalanceRuble(self::ID_FIRM_2));
+
+        return true;
     }
 
-    public function tearDown(): void
+    /** @return Billing */
+    public function getBilling(): Billing
     {
-        unset($this->hBilling);
+        return (new Billing())
+            ->setStorage(new MemoryStorage());
     }
 }

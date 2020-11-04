@@ -94,6 +94,23 @@ class Billing implements BillingInterface
     }
 
     /**
+     * @param int $from
+     * @param int $to
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function transferFirmRuble(int $from, int $to, float $amount, string $comment): bool
+    {
+        $hFrom = $this->hStorage->getAccount($from, Account::TYPE_FIRM);
+        $hTo = $this->hStorage->getAccount($to, Account::TYPE_FIRM);
+        $hPosting = (new Posting($amount, $comment))
+            ->setFrom($hFrom)
+            ->setTo($hTo);
+        return $this->hStorage->transferRuble($hPosting);
+    }
+
+    /**
      * @param int $id
      * @param float $amount
      * @param string $comment
