@@ -2,7 +2,9 @@
 
 namespace Advecs\Billing;
 
+use Advecs\Billing\Account\Account;
 use Advecs\Billing\Account\User;
+use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\Storage\StorageInterface;
 
 /**
@@ -20,8 +22,8 @@ class Billing implements BillingInterface
      */
     public function getUserBalanceRuble(int $id): float
     {
-        $hAccount = new User($id);
-        return $this->hStorage->getBalanceRuble($hAccount);
+        $hUser = $this->hStorage->getAccount($id, Account::TYPE_USER);
+        return $hUser->getBalance();
     }
 
     /**
@@ -30,8 +32,9 @@ class Billing implements BillingInterface
      */
     public function getUserBalanceBonus(int $id): float
     {
-        $hAccount = new User($id);
-        return $this->hStorage->getBalanceBonus($hAccount);
+        /** @var User $hUser */
+        $hUser = $this->hStorage->getAccount($id, Account::TYPE_USER);
+        return $hUser->getBalanceBonus();
     }
 
     /**
@@ -42,7 +45,10 @@ class Billing implements BillingInterface
      */
     public function addUserRuble(int $id, float $amount, string $comment = 'пополнение счета'): bool
     {
-        return true;
+        $hUser = $this->hStorage->getAccount($id, Account::TYPE_USER);
+        $hPosting = (new Posting($amount, $comment))
+            ->setTo($hUser);
+        return $this->hStorage->addRuble($hUser, $hPosting);
     }
 
     /**
@@ -53,7 +59,11 @@ class Billing implements BillingInterface
      */
     public function addUserBonus(int $id, float $amount, string $comment = 'зачисление бонусов'): bool
     {
-        return true;
+        /** @var User $hUser */
+        $hUser = $this->hStorage->getAccount($id, Account::TYPE_USER);
+        $hPosting = (new Posting($amount, $comment))
+            ->setTo($hUser);
+        return $this->hStorage->addBonus($hUser, $hPosting);
     }
 
     /**

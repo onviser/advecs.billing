@@ -13,16 +13,11 @@ use Advecs\Billing\Posting\Posting;
 interface StorageInterface
 {
     /**
-     * @param Account $hAccount
-     * @return float
+     * @param int $id
+     * @param int $type
+     * @return Account
      */
-    public function getBalanceRuble(Account $hAccount): float;
-
-    /**
-     * @param User $hUser
-     * @return float
-     */
-    public function getBalanceBonus(User $hUser): float;
+    public function getAccount(int $id, int $type = Account::TYPE_USER): Account;
 
     /**
      * @param Account $hAccount

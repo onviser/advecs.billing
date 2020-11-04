@@ -14,12 +14,19 @@ class BillingTest extends TestCase
         $hBilling = (new Billing())
             ->setStorage(new MemoryStorage());
 
-        $hBilling->addUserRuble(1, 3.14, 'пополнение счета');
-        $hBilling->addUserRuble(1, 6.28, 'еще одно пополнение счета');
-        $hBilling->addUserBonus(1, 0.31, 'зачисление бонусов');
+        // пользователь 1
+        $id = 1;
+        $hBilling->addUserRuble($id, 3.14, 'пополнение счета');
+        $hBilling->addUserRuble($id, 6.28, 'еще одно пополнение счета');
+        $hBilling->addUserBonus($id, 0.31, 'зачисление бонусов');
+        $this->assertEquals(9.42, $hBilling->getUserBalanceRuble($id));
+        $this->assertEquals(0.31, $hBilling->getUserBalanceBonus($id));
 
-        $this->assertEquals(9.42, $hBilling->getUserBalanceRuble(1));
-        $this->assertEquals(0.31, $hBilling->getUserBalanceBonus(1));
+        // пользователь 2
+        $id = 2;
+        $hBilling->addUserRuble($id, 3.15, 'пополнение счета');
+        $this->assertEquals(3.15, $hBilling->getUserBalanceRuble($id));
+        $this->assertEquals(0, $hBilling->getUserBalanceBonus($id));
 
         return true;
     }

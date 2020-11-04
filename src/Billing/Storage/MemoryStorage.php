@@ -3,93 +3,58 @@
 namespace Advecs\Billing\Storage;
 
 use Advecs\Billing\Account\Account;
+use Advecs\Billing\Account\Firm;
 use Advecs\Billing\Account\User;
 use Advecs\Billing\Posting\Posting;
 
 class MemoryStorage implements StorageInterface
 {
-    /** @var array */
+    /** @var Account[][] */
     protected $account = [];
 
     /** @var Posting[] */
-    protected $posting = [];
+    protected $postingRuble = [];
 
-
-
-    /**
-     * @param Account $hAccount
-     * @param Posting $hPosting
-     * @return bool
-     */
-    public function moneyIn(Account $hAccount, Posting $hPosting): bool
-    {
-        $this->checkAccount($hAccount);
-        $hPosting->setTo($hAccount);
-        $this->posting[$hAccount->getType()][$hAccount->getId()][] = $hPosting;
-        $hAccount->changeBalance($hPosting);
-        return true;
-    }
+    /** @var Posting[] */
+    protected $postingBonus = [];
 
     /**
-     * @param Account $hFrom
-     * @param Account $hTo
-     * @param Posting $hPosting
-     * @return bool
+     * @param int $id
+     * @param int $type
+     * @return Account
      */
-    public function moneyTransfer(Account $hFrom, Account $hTo, Posting $hPosting): bool
+    public function getAccount(int $id, int $type = Account::TYPE_USER): Account
     {
-        $this->checkAccount($hFrom);
-        $this->checkAccount($hTo);
-        return true;
-    }
-
-    /**
-     * @param Account $hAccount
-     * @return bool
-     */
-    protected function create(Account $hAccount)
-    {
-        if (!array_key_exists($hAccount->getType(), $this->account)) {
-            $this->account[$hAccount->getType()] = [];
-        }
-        if (!array_key_exists($hAccount->getId(), $this->account[$hAccount->getType()])) {
-            $this->account[$hAccount->getType()][$hAccount->getId()] = 0;
-        }
-        return true;
-    }
-
-    public function getBalanceRuble(Account $hAccount): float
-    {
-        $this->create($hAccount);
-        return $this->getBalance($hAccount);
-    }
-
-    public function getBalanceBonus(User $hUser): float
-    {
-        // TODO: Implement getBalanceBonus() method.
-    }
-
-    public function addRuble(Account $hAccount, Posting $hPosting): bool
-    {
-        // TODO: Implement addRuble() method.
-    }
-
-    public function addBonus(User $hUser, Posting $hPosting): bool
-    {
-        // TODO: Implement addBonus() method.
-    }
-
-    /**
-     * @param Account $hAccount
-     * @return float
-     */
-    protected function getBalance(Account $hAccount): float
-    {
-        if (array_key_exists($hAccount->getType(), $this->account)) {
-            if (array_key_exists($hAccount->getId(), $this->account[$hAccount->getType()])) {
-                return floatval($this->account[$hAccount->getType()][$hAccount->getId()]);
+        if (array_key_exists($type, $this->account)) {
+            if (array_key_exists($id, $this->account[$type])) {
+                return $this->account[$type][$id];
             }
         }
-        return 0.0;
+        $this->account[$type][$id] = ($type === Account::TYPE_FIRM) ? new Firm($id) : new User($id);
+        return $this->account[$type][$id];
+    }
+
+    /**
+     * @param Account $hAccount
+     * @param Posting $hPosting
+     * @return bool
+     */
+    public function addRuble(Account $hAccount, Posting $hPosting): bool
+    {
+        $hAccount->changeBalance($hPosting);
+        $this->postingRuble[$hAccount->getType()][$hAccount->getId()][] = $hPosting;
+        return true;
+    }
+
+    /**
+     * @param User $hUser
+     * @param Posting $hPosting
+     * @return bool
+     */
+    public function addBonus(User $hUser, Posting $hPosting): bool
+    {
+        $hUser->changeBalanceBonus($hPosting);
+        $this->postingBonus[$hUser->getType()][$hUser->getId()][] = $hPosting;
+        return true;
     }
 }
