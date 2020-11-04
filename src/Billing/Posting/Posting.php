@@ -4,6 +4,10 @@ namespace Advecs\Billing\Posting;
 
 use Advecs\Billing\Account\Account;
 
+/**
+ * Class Posting
+ * @package Advecs\Billing\Posting
+ */
 class Posting
 {
     /** @var float */
@@ -30,44 +34,38 @@ class Posting
     }
 
     /**
-     * @param Account $hFrom
+     * @param Account|null $hFrom
      * @return $this
      */
-    public function setFrom(Account $hFrom): self
+    public function setFrom(?Account $hFrom): self
     {
         $this->hFrom = $hFrom;
         return $this;
     }
 
-    /**
-     * @return Account|null
-     */
+    /** @return Account|null */
     public function getFrom(): ?Account
     {
         return $this->hFrom;
     }
 
     /**
-     * @param Account $hTo
+     * @param Account|null $hTo
      * @return $this
      */
-    public function setTo(Account $hTo): self
+    public function setTo(?Account $hTo): self
     {
         $this->hTo = $hTo;
         return $this;
     }
 
-    /**
-     * @return Account|null
-     */
+    /** @return Account|null */
     public function getTo(): ?Account
     {
         return $this->hTo;
     }
 
-    /**
-     * @return float
-     */
+    /** @return float */
     public function getAmount(): float
     {
         return $this->amount;

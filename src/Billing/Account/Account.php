@@ -4,6 +4,10 @@ namespace Advecs\Billing\Account;
 
 use Advecs\Billing\Posting\Posting;
 
+/**
+ * Class Account
+ * @package Advecs\Billing\Account
+ */
 abstract class Account
 {
     const TYPE_USER = 1;

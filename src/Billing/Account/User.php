@@ -2,6 +2,10 @@
 
 namespace Advecs\Billing\Account;
 
+/**
+ * Class User
+ * @package Advecs\Billing\Account
+ */
 class User extends Account
 {
     /** @var float */

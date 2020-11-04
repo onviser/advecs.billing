@@ -2,53 +2,55 @@
 
 namespace Advecs\Billing;
 
-use Advecs\Billing\Account\Account;
-use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\Storage\StorageInterface;
 
+/**
+ * Class Billing
+ * @package Advecs\Billing
+ */
 class Billing implements BillingInterface
 {
     /** @var StorageInterface */
     protected $hStorage;
 
     /**
-     * @param Account $hAccount
+     * @param int $id
      * @return float
      */
-    public function getBalance(Account $hAccount): float
+    public function getUserBalanceRuble(int $id): float
     {
         return 0;
     }
 
     /**
-     * @param Account $hAccount
-     * @param Posting $hPosting
-     * @return bool
+     * @param int $id
+     * @return float
      */
-    public function moneyIn(Account $hAccount, Posting $hPosting): bool
+    public function getUserBalanceBonus(int $id): float
     {
-        return false;
+        return 0;
     }
 
     /**
-     * @param Account $hAccount
-     * @param Posting $hPosting
+     * @param int $id
+     * @param float $amount
+     * @param string $comment
      * @return bool
      */
-    public function moneyOut(Account $hAccount, Posting $hPosting): bool
+    public function addUserRuble(int $id, float $amount, string $comment = 'пополнение счета'): bool
     {
-        return false;
+        return true;
     }
 
     /**
-     * @param Account $hAccountFrom
-     * @param Account $hAccountTo
-     * @param Posting $hPosting
+     * @param int $id
+     * @param float $amount
+     * @param string $comment
      * @return bool
      */
-    public function moneyTransfer(Account $hAccountFrom, Account $hAccountTo, Posting $hPosting): bool
+    public function addUserBonus(int $id, float $amount, string $comment = 'зачисление бонусов'): bool
     {
-        return false;
+        return true;
     }
 
     /**

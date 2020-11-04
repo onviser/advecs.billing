@@ -2,6 +2,10 @@
 
 namespace Advecs\Billing\Account;
 
+/**
+ * Class Firm
+ * @package Advecs\Billing\Account
+ */
 class Firm extends Account
 {
     /** @return int */
