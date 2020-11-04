@@ -39,6 +39,29 @@ interface BillingInterface
     public function addUserBonus(int $id, float $amount, string $comment = 'зачисление бонусов'): bool;
 
     /**
+     * @param int $from
+     * @param int $to
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function transferUserRuble(int $from, int $to, float $amount, string $comment): bool;
+
+    /**
+     * @param int $id
+     * @return float
+     */
+    public function getFirmBalanceRuble(int $id): float;
+
+    /**
+     * @param int $id
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function addFirmRuble(int $id, float $amount, string $comment = 'пополнение счета фирмы'): bool;
+
+    /**
      * @param StorageInterface $hStorage
      * @return $this
      */

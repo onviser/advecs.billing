@@ -73,7 +73,7 @@ class Billing implements BillingInterface
      * @param string $comment
      * @return bool
      */
-    public function transferUserRuble(int $from, int $to, float $amount, string $comment)
+    public function transferUserRuble(int $from, int $to, float $amount, string $comment): bool
     {
         $hFrom = $this->hStorage->getAccount($from, Account::TYPE_USER);
         $hTo = $this->hStorage->getAccount($to, Account::TYPE_USER);
@@ -83,6 +83,29 @@ class Billing implements BillingInterface
         return $this->hStorage->transferRuble($hPosting);
     }
 
+    /**
+     * @param int $id
+     * @return float
+     */
+    public function getFirmBalanceRuble(int $id): float
+    {
+        $hFirm = $this->hStorage->getAccount($id, Account::TYPE_FIRM);
+        return $hFirm->getBalance();
+    }
+
+    /**
+     * @param int $id
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function addFirmRuble(int $id, float $amount, string $comment = 'пополнение счета фирмы'): bool
+    {
+        $hFirm = $this->hStorage->getAccount($id, Account::TYPE_FIRM);
+        $hPosting = (new Posting($amount, $comment))
+            ->setTo($hFirm);
+        return $this->hStorage->addRuble($hPosting);
+    }
 
     /**
      * @param StorageInterface $hStorage
