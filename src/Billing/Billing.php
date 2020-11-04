@@ -2,6 +2,7 @@
 
 namespace Advecs\Billing;
 
+use Advecs\Billing\Account\User;
 use Advecs\Billing\Storage\StorageInterface;
 
 /**
@@ -19,7 +20,8 @@ class Billing implements BillingInterface
      */
     public function getUserBalanceRuble(int $id): float
     {
-        return 0;
+        $hAccount = new User($id);
+        return $this->hStorage->getBalanceRuble($hAccount);
     }
 
     /**
@@ -28,7 +30,8 @@ class Billing implements BillingInterface
      */
     public function getUserBalanceBonus(int $id): float
     {
-        return 0;
+        $hAccount = new User($id);
+        return $this->hStorage->getBalanceBonus($hAccount);
     }
 
     /**
