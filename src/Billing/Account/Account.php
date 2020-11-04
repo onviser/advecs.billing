@@ -2,8 +2,6 @@
 
 namespace Advecs\Billing\Account;
 
-use Advecs\Billing\Posting\Posting;
-
 /**
  * Class Account
  * @package Advecs\Billing\Account
@@ -41,12 +39,12 @@ abstract class Account
     }
 
     /**
-     * @param Posting $hPosting
+     * @param float $amount
      * @return float
      */
-    public function changeBalance(Posting $hPosting): float
+    public function changeBalance(float $amount): float
     {
-        $this->balance += $hPosting->getAmount();
+        $this->balance += $amount;
         return $this->balance;
     }
 

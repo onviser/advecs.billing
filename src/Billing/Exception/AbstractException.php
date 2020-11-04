@@ -2,11 +2,13 @@
 
 namespace Advecs\Billing\Exception;
 
+use Exception;
+
 /**
  * Class AbstractException
  * @package Advecs\Billing\Exception
  */
-abstract class AbstractException extends \Exception
+abstract class AbstractException extends Exception
 {
 
 }

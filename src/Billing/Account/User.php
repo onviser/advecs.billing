@@ -2,8 +2,6 @@
 
 namespace Advecs\Billing\Account;
 
-use Advecs\Billing\Posting\Posting;
-
 /**
  * Class User
  * @package Advecs\Billing\Account
@@ -20,12 +18,12 @@ class User extends Account
     }
 
     /**
-     * @param Posting $hPosting
+     * @param float $amount
      * @return float
      */
-    public function changeBalanceBonus(Posting $hPosting): float
+    public function changeBalanceBonus(float $amount): float
     {
-        $this->balanceBonus += $hPosting->getAmount();
+        $this->balanceBonus += $amount;
         return $this->balanceBonus;
     }
 

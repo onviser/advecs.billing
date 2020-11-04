@@ -35,26 +35,47 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
-     * @param Account $hAccount
-     * @param Posting $hPosting
+     * @param Posting $hPostingCredit
      * @return bool
      */
-    public function addRuble(Account $hAccount, Posting $hPosting): bool
+    public function addRuble(Posting $hPostingCredit): bool
     {
-        $hAccount->changeBalance($hPosting);
-        $this->postingRuble[$hAccount->getType()][$hAccount->getId()][] = $hPosting;
+        $hAccount = $hPostingCredit->getTo();
+        $hAccount->changeBalance($hPostingCredit->getAmount());
+        $this->postingRuble[$hAccount->getType()][$hAccount->getId()][] = $hPostingCredit;
         return true;
     }
 
     /**
-     * @param User $hUser
-     * @param Posting $hPosting
+     * @param Posting $hPostingCredit
      * @return bool
      */
-    public function addBonus(User $hUser, Posting $hPosting): bool
+    public function addBonus(Posting $hPostingCredit): bool
     {
-        $hUser->changeBalanceBonus($hPosting);
-        $this->postingBonus[$hUser->getType()][$hUser->getId()][] = $hPosting;
+        /** @var User $hUser */
+        $hUser = $hPostingCredit->getTo();
+        $hUser->changeBalanceBonus($hPostingCredit->getAmount());
+        $this->postingBonus[$hUser->getType()][$hUser->getId()][] = $hPostingCredit;
+        return true;
+    }
+
+    /**
+     * @param Posting $hPostingCredit
+     * @return bool
+     */
+    public function transferRuble(Posting $hPostingCredit): bool
+    {
+        // зачисление
+        $hTo = $hPostingCredit->getTo();
+        $hTo->changeBalance($hPostingCredit->getAmount());
+        $this->postingRuble[$hTo->getType()][$hTo->getId()][] = $hPostingCredit;
+
+        // списание
+        $hPostingDebit = new Posting(-1 * $hPostingCredit->getAmount(), $hPostingCredit->getComment());
+        $hFrom = $hPostingCredit->getFrom();
+        $hFrom->changeBalance($hPostingDebit->getAmount());
+        $this->postingRuble[$hFrom->getType()][$hFrom->getId()][] = $hPostingDebit;
+
         return true;
     }
 }

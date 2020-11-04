@@ -48,7 +48,7 @@ class Billing implements BillingInterface
         $hUser = $this->hStorage->getAccount($id, Account::TYPE_USER);
         $hPosting = (new Posting($amount, $comment))
             ->setTo($hUser);
-        return $this->hStorage->addRuble($hUser, $hPosting);
+        return $this->hStorage->addRuble($hPosting);
     }
 
     /**
@@ -63,8 +63,26 @@ class Billing implements BillingInterface
         $hUser = $this->hStorage->getAccount($id, Account::TYPE_USER);
         $hPosting = (new Posting($amount, $comment))
             ->setTo($hUser);
-        return $this->hStorage->addBonus($hUser, $hPosting);
+        return $this->hStorage->addBonus($hPosting);
     }
+
+    /**
+     * @param int $from
+     * @param int $to
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function transferUserRuble(int $from, int $to, float $amount, string $comment)
+    {
+        $hFrom = $this->hStorage->getAccount($from, Account::TYPE_USER);
+        $hTo = $this->hStorage->getAccount($to, Account::TYPE_USER);
+        $hPosting = (new Posting($amount, $comment))
+            ->setFrom($hFrom)
+            ->setTo($hTo);
+        return $this->hStorage->transferRuble($hPosting);
+    }
+
 
     /**
      * @param StorageInterface $hStorage

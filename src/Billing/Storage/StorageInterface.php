@@ -3,7 +3,6 @@
 namespace Advecs\Billing\Storage;
 
 use Advecs\Billing\Account\Account;
-use Advecs\Billing\Account\User;
 use Advecs\Billing\Posting\Posting;
 
 /**
@@ -20,16 +19,20 @@ interface StorageInterface
     public function getAccount(int $id, int $type = Account::TYPE_USER): Account;
 
     /**
-     * @param Account $hAccount
-     * @param Posting $hPosting
+     * @param Posting $hPostingCredit
      * @return bool
      */
-    public function addRuble(Account $hAccount, Posting $hPosting): bool;
+    public function addRuble(Posting $hPostingCredit): bool;
 
     /**
-     * @param User $hUser
-     * @param Posting $hPosting
+     * @param Posting $hPostingCredit
      * @return bool
      */
-    public function addBonus(User $hUser, Posting $hPosting): bool;
+    public function addBonus(Posting $hPostingCredit): bool;
+
+    /**
+     * @param Posting $hPostingCredit
+     * @return bool
+     */
+    public function transferRuble(Posting $hPostingCredit): bool;
 }

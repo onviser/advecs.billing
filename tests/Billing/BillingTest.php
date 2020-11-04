@@ -8,26 +8,54 @@ use PHPUnit\Framework\TestCase;
 
 class BillingTest extends TestCase
 {
+    const ID1 = 1;
+    const ID2 = 2;
+
+    /** @var Billing */
+    protected $hBilling;
+
     /** @return bool */
-    public function testAddUser(): bool
+    public function testUserAdd(): bool
     {
-        $hBilling = (new Billing())
+        $this->assertEquals(9.42, $this->hBilling->getUserBalanceRuble(self::ID1));
+        $this->assertEquals(0.31, $this->hBilling->getUserBalanceBonus(self::ID1));
+
+        $this->assertEquals(3.15, $this->hBilling->getUserBalanceRuble(self::ID2));
+        $this->assertEquals(0, $this->hBilling->getUserBalanceBonus(self::ID2));
+
+        return true;
+    }
+
+    /** @return bool */
+    public function testUserTransfer(): bool
+    {
+        $this->hBilling->transferUserRuble(self::ID1, self::ID2, 1.1, 'перевод средств');
+        $this->assertEquals(8.32, $this->hBilling->getUserBalanceRuble(self::ID1));
+        $this->assertEquals(4.25, $this->hBilling->getUserBalanceRuble(self::ID2));
+
+        $this->hBilling->transferUserRuble(self::ID2, self::ID1, 0.03, 'перевод средств обратно');
+        $this->assertEquals(8.35, $this->hBilling->getUserBalanceRuble(self::ID1));
+        $this->assertEquals(4.22, $this->hBilling->getUserBalanceRuble(self::ID2));
+
+        return true;
+    }
+
+    public function setUp(): void
+    {
+        $this->hBilling = (new Billing())
             ->setStorage(new MemoryStorage());
 
         // пользователь 1
-        $id = 1;
-        $hBilling->addUserRuble($id, 3.14, 'пополнение счета');
-        $hBilling->addUserRuble($id, 6.28, 'еще одно пополнение счета');
-        $hBilling->addUserBonus($id, 0.31, 'зачисление бонусов');
-        $this->assertEquals(9.42, $hBilling->getUserBalanceRuble($id));
-        $this->assertEquals(0.31, $hBilling->getUserBalanceBonus($id));
+        $this->hBilling->addUserRuble(self::ID1, 3.14, 'пополнение счета');
+        $this->hBilling->addUserRuble(self::ID1, 6.28, 'еще одно пополнение счета');
+        $this->hBilling->addUserBonus(self::ID1, 0.31, 'зачисление бонусов');
 
         // пользователь 2
-        $id = 2;
-        $hBilling->addUserRuble($id, 3.15, 'пополнение счета');
-        $this->assertEquals(3.15, $hBilling->getUserBalanceRuble($id));
-        $this->assertEquals(0, $hBilling->getUserBalanceBonus($id));
+        $this->hBilling->addUserRuble(self::ID2, 3.15, 'пополнение счета');
+    }
 
-        return true;
+    public function tearDown(): void
+    {
+        unset($this->hBilling);
     }
 }
