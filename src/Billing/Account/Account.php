@@ -2,6 +2,8 @@
 
 namespace Advecs\Billing\Account;
 
+use Advecs\Billing\Posting\Posting;
+
 abstract class Account
 {
     const TYPE_USER = 1;
@@ -9,6 +11,9 @@ abstract class Account
 
     /** @var int */
     protected $id = 0;
+
+    /** @var float */
+    protected $balance = 0.0;
 
     /**
      * Account constructor.
@@ -20,5 +25,27 @@ abstract class Account
     }
 
     /** @return int */
-    abstract function getType(): int;
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /** @return float */
+    public function getBalance(): float
+    {
+        return $this->balance;
+    }
+
+    /**
+     * @param Posting $hPosting
+     * @return float
+     */
+    public function changeBalance(Posting $hPosting): float
+    {
+        $this->balance += $hPosting->getAmount();
+        return $this->balance;
+    }
+
+    /** @return int */
+    public abstract function getType(): int;
 }
