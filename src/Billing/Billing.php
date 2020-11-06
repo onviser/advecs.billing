@@ -5,6 +5,7 @@ namespace Advecs\Billing;
 use Advecs\Billing\Account\Account;
 use Advecs\Billing\Account\User;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\StorageInterface;
 
 /**
@@ -156,6 +157,16 @@ class Billing implements BillingInterface
             ->setFrom($hFrom)
             ->setTo($hTo);
         return $this->hStorage->transferRuble($hPosting);
+    }
+
+    /**
+     * Список проводок
+     * @param Search $hSearch
+     * @return Posting[]
+     */
+    public function getPosting(Search $hSearch): array
+    {
+        return [];
     }
 
     /**

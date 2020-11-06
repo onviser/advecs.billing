@@ -33,6 +33,18 @@ class Search
         $this->accountType = $accountType;
     }
 
+    /** @return int */
+    public function getAccount(): int
+    {
+        return $this->account;
+    }
+
+    /** @return int */
+    public function getAccountType(): int
+    {
+        return $this->accountType;
+    }
+
     /**
      * @param int $offset
      * @param int $limit
@@ -43,6 +55,18 @@ class Search
         $this->offset = $offset;
         $this->limit = $limit;
         return $this;
+    }
+
+    /** @return int */
+    public function getOffset(): int
+    {
+        return $this->offset;
+    }
+
+    /** @return int */
+    public function getLimit(): int
+    {
+        return $this->limit;
     }
 
     /**
@@ -57,6 +81,18 @@ class Search
         return $this;
     }
 
+    /** @return int */
+    public function getTimeFrom(): int
+    {
+        return $this->timeFrom;
+    }
+
+    /** @return int */
+    public function getTimeTo(): int
+    {
+        return $this->timeTo;
+    }
+
     /**
      * @param int $amountFrom
      * @param int $amountTo
@@ -69,6 +105,18 @@ class Search
         return $this;
     }
 
+    /** @return int */
+    public function getAmountFrom(): int
+    {
+        return $this->amountFrom;
+    }
+
+    /** @return int */
+    public function getAmountTo(): int
+    {
+        return $this->amountTo;
+    }
+
     /**
      * @param string $comment
      * @return $this
@@ -77,5 +125,11 @@ class Search
     {
         $this->comment = $comment;
         return $this;
+    }
+
+    /** @return string */
+    public function getComment(): string
+    {
+        return $this->comment;
     }
 }

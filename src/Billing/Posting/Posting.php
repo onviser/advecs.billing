@@ -13,6 +13,9 @@ class Posting
     /** @var float */
     protected $amount = 0.0;
 
+    /** @var float */
+    protected $time = 0.0;
+
     /** @var string */
     protected $comment = '';
 
@@ -31,6 +34,7 @@ class Posting
     {
         $this->amount = $amount;
         $this->comment = $comment;
+        $this->time = microtime();
     }
 
     /**
@@ -85,5 +89,20 @@ class Posting
     public function getComment(): string
     {
         return $this->comment;
+    }
+
+    /**
+     * @param float $time
+     * @return $this
+     */
+    public function setTime(float $time): self
+    {
+        $this->time = $time;
+        return $this;
+    }
+
+    public function getTime(): float
+    {
+        return $this->time;
     }
 }

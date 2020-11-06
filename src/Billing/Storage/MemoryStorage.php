@@ -6,6 +6,7 @@ use Advecs\Billing\Account\Account;
 use Advecs\Billing\Account\Firm;
 use Advecs\Billing\Account\User;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\Search\Search;
 
 class MemoryStorage implements StorageInterface
 {
@@ -77,5 +78,57 @@ class MemoryStorage implements StorageInterface
         $this->postingRuble[$hFrom->getType()][$hFrom->getId()][] = $hPostingDebit;
 
         return true;
+    }
+
+    /**
+     * @param Search $hSearch
+     * @return Posting[]
+     */
+    public function getPosting(Search $hSearch): array
+    {
+        $result = [];
+        foreach ($this->postingRuble as $accountType => $items) {
+            if ($hSearch->getAccountType() > 0) {
+                if ($hSearch->getAccountType() != $accountType) {
+                    continue;
+                }
+            }
+            /**@var Posting $hPosting */
+            foreach ($items as $account => $hPosting) {
+                if ($hSearch->getAccount() > 0) {
+                    if ($hSearch->getAccount() != $account) {
+                        continue;
+                    }
+                }
+                if ($hSearch->getAmountFrom() > 0) {
+                    if ($hSearch->getAmountFrom() > abs($hPosting->getAmount())) {
+                        continue;
+                    }
+                }
+                if ($hSearch->getAmountTo() > 0) {
+                    if ($hSearch->getAmountTo() < abs($hPosting->getAmount())) {
+                        continue;
+                    }
+                }
+                if ($hSearch->getTimeFrom() > 0) {
+                    if ($hSearch->getTimeFrom() > $hPosting->getTime()) {
+                        continue;
+                    }
+                }
+                if ($hSearch->getTimeTo() > 0) {
+                    if ($hSearch->getTimeTo() < $hPosting->getTime()) {
+                        continue;
+                    }
+                }
+                if ($hSearch->getComment() != '') {
+                    if (strpos($hPosting->getComment(), $hSearch->getComment()) === false) {
+                        continue;
+                    }
+
+                }
+                $result[] = $hPosting;
+            }
+        }
+        return $result;
     }
 }

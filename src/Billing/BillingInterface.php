@@ -2,6 +2,8 @@
 
 namespace Advecs\Billing;
 
+use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\StorageInterface;
 
 /**
@@ -87,6 +89,13 @@ interface BillingInterface
      * @return bool
      */
     public function transferFirmUserRuble(int $firm, int $user, float $amount, string $comment): bool;
+
+    /**
+     * Список проводок
+     * @param Search $hSearch
+     * @return Posting[]
+     */
+    public function getPosting(Search $hSearch): array;
 
     /**
      * @param StorageInterface $hStorage

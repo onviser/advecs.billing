@@ -4,6 +4,7 @@ namespace Advecs\Billing\Storage;
 
 use Advecs\Billing\Account\Account;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\Search\Search;
 
 /**
  * Interface StorageInterface
@@ -35,4 +36,10 @@ interface StorageInterface
      * @return bool
      */
     public function transferRuble(Posting $hPostingCredit): bool;
+
+    /**
+     * @param Search $hSearch
+     * @return Posting[]
+     */
+    public function getPosting(Search $hSearch): array;
 }
