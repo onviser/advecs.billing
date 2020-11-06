@@ -27,16 +27,36 @@ class Search
      * @param int $account
      * @param int $accountType
      */
-    public function __construct(int $account, int $accountType = 0)
+    public function __construct(int $account = 0, int $accountType = 0)
     {
         $this->account = $account;
         $this->accountType = $accountType;
+    }
+
+    /**
+     * @param int $account
+     * @return $this
+     */
+    public function setAccount(int $account): self
+    {
+        $this->account = $account;
+        return $this;
     }
 
     /** @return int */
     public function getAccount(): int
     {
         return $this->account;
+    }
+
+    /**
+     * @param int $accountType
+     * @return $this
+     */
+    public function setAccountType(int $accountType): self
+    {
+        $this->accountType = $accountType;
+        return $this;
     }
 
     /** @return int */

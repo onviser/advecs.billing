@@ -94,39 +94,40 @@ class MemoryStorage implements StorageInterface
                 }
             }
             /**@var Posting $hPosting */
-            foreach ($items as $account => $hPosting) {
-                if ($hSearch->getAccount() > 0) {
-                    if ($hSearch->getAccount() != $account) {
-                        continue;
+            foreach ($items as $account => $subItems) {
+                foreach ($subItems as $hPosting) {
+                    if ($hSearch->getAccount() > 0) {
+                        if ($hSearch->getAccount() != $account) {
+                            continue;
+                        }
                     }
-                }
-                if ($hSearch->getAmountFrom() > 0) {
-                    if ($hSearch->getAmountFrom() > abs($hPosting->getAmount())) {
-                        continue;
+                    if ($hSearch->getAmountFrom() > 0) {
+                        if ($hSearch->getAmountFrom() > abs($hPosting->getAmount())) {
+                            continue;
+                        }
                     }
-                }
-                if ($hSearch->getAmountTo() > 0) {
-                    if ($hSearch->getAmountTo() < abs($hPosting->getAmount())) {
-                        continue;
+                    if ($hSearch->getAmountTo() > 0) {
+                        if ($hSearch->getAmountTo() < abs($hPosting->getAmount())) {
+                            continue;
+                        }
                     }
-                }
-                if ($hSearch->getTimeFrom() > 0) {
-                    if ($hSearch->getTimeFrom() > $hPosting->getTime()) {
-                        continue;
+                    if ($hSearch->getTimeFrom() > 0) {
+                        if ($hSearch->getTimeFrom() > $hPosting->getTime()) {
+                            continue;
+                        }
                     }
-                }
-                if ($hSearch->getTimeTo() > 0) {
-                    if ($hSearch->getTimeTo() < $hPosting->getTime()) {
-                        continue;
+                    if ($hSearch->getTimeTo() > 0) {
+                        if ($hSearch->getTimeTo() < $hPosting->getTime()) {
+                            continue;
+                        }
                     }
-                }
-                if ($hSearch->getComment() != '') {
-                    if (strpos($hPosting->getComment(), $hSearch->getComment()) === false) {
-                        continue;
+                    if ($hSearch->getComment() != '') {
+                        if (strpos($hPosting->getComment(), $hSearch->getComment()) === false) {
+                            continue;
+                        }
                     }
-
+                    $result[] = $hPosting;
                 }
-                $result[] = $hPosting;
             }
         }
         return $result;

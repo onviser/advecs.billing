@@ -34,7 +34,7 @@ class Posting
     {
         $this->amount = $amount;
         $this->comment = $comment;
-        $this->time = microtime();
+        $this->time = microtime(true);
     }
 
     /**

@@ -166,7 +166,7 @@ class Billing implements BillingInterface
      */
     public function getPosting(Search $hSearch): array
     {
-        return [];
+        return $this->hStorage->getPosting($hSearch);
     }
 
     /**

@@ -2,7 +2,9 @@
 
 namespace Tests\Billing;
 
+use Advecs\Billing\Account\Account;
 use Advecs\Billing\Billing;
+use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\MemoryStorage;
 use PHPUnit\Framework\TestCase;
 
@@ -10,8 +12,8 @@ class BillingTest extends TestCase
 {
     const ID_USER_1 = 1;
     const ID_USER_2 = 2;
-    const ID_FIRM_1 = 10;
-    const ID_FIRM_2 = 20;
+    const ID_FIRM_1 = 1;
+    const ID_FIRM_2 = 2;
 
     /** @return bool */
     public function testUserAdd(): bool
@@ -113,6 +115,79 @@ class BillingTest extends TestCase
         $hBilling->transferFirmUserRuble(self::ID_FIRM_1, self::ID_USER_1, 400, 'перевод от фирмы пользователю');
         $this->assertEquals(1400, $hBilling->getUserBalanceRuble(self::ID_USER_1));
         $this->assertEquals(4600, $hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
+
+        return true;
+    }
+
+    /** @return bool */
+    public function testGetPosting(): bool
+    {
+        $hBilling = $this->getBilling();
+
+        $time1 = time();
+        $hBilling->addUserRuble(self::ID_USER_1, 1000, 'пополнение u1-1');
+        $hBilling->addUserRuble(self::ID_USER_1, 200, 'пополнение u1-2');
+        $hBilling->addUserRuble(self::ID_USER_1, 500, 'пополнение u1-3');
+        $hBilling->addUserRuble(self::ID_USER_1, 300, 'пополнение u1-4');
+
+        sleep(1);
+        $time2 = time();
+        $hBilling->addUserRuble(self::ID_USER_2, 500, 'пополнение u2-1');
+        $hBilling->addUserRuble(self::ID_USER_2, 200, 'пополнение u2-2');
+
+        sleep(1);
+        $time3 = time();
+        $hBilling->addFirmRuble(self::ID_FIRM_1, 5000, 'пополнение f1-1');
+        $hBilling->addFirmRuble(self::ID_FIRM_1, 2000, 'пополнение f1-2');
+
+        $hBilling->addFirmRuble(self::ID_FIRM_2, 1300, 'пополнение f2-1');
+        $hBilling->addFirmRuble(self::ID_FIRM_2, 1400, 'пополнение f2-2');
+
+        $posting = $hBilling->getPosting(new Search());
+        $this->assertCount(10, $posting);
+
+        $posting = $hBilling->getPosting(
+            (new Search(self::ID_USER_1, Account::TYPE_USER))
+                ->setAmount(200, 500));
+        $this->assertCount(3, $posting);
+
+        $posting = $hBilling->getPosting(
+            (new Search())
+                ->setAccountType(Account::TYPE_USER)
+                ->setAmount(200, 500));
+        $this->assertCount(5, $posting);
+
+        $posting = $hBilling->getPosting(
+            (new Search())
+                ->setAccount(self::ID_USER_1)
+                ->setAmount(200, 5000));
+        $this->assertCount(6, $posting);
+
+        $posting = $hBilling->getPosting(
+            (new Search())
+                ->setComment('u1'));
+        $this->assertCount(4, $posting);
+
+        $posting = $hBilling->getPosting(
+            (new Search())
+                ->setComment('u2'));
+        $this->assertCount(2, $posting);
+
+        $posting = $hBilling->getPosting(
+            (new Search())
+                ->setAmount(200, 300)
+                ->setComment('u'));
+        $this->assertCount(3, $posting);
+
+        $posting = $hBilling->getPosting(
+            (new Search())
+                ->setTime($time1, $time2));
+        $this->assertCount(4, $posting);
+
+        $posting = $hBilling->getPosting(
+            (new Search())
+                ->setTime($time2, $time3));
+        $this->assertCount(2, $posting);
 
         return true;
     }
