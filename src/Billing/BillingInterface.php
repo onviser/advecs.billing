@@ -11,18 +11,21 @@ use Advecs\Billing\Storage\StorageInterface;
 interface BillingInterface
 {
     /**
+     * Баланс пользователя в рублях
      * @param int $id
      * @return float
      */
     public function getUserBalanceRuble(int $id): float;
 
     /**
+     * Баланс пользователя в бонусах
      * @param int $id
      * @return float
      */
     public function getUserBalanceBonus(int $id): float;
 
     /**
+     * Пополнение рублевого счета пользователя
      * @param int $id
      * @param float $amount
      * @param string $comment
@@ -31,6 +34,7 @@ interface BillingInterface
     public function addUserRuble(int $id, float $amount, string $comment = 'пополнение счета'): bool;
 
     /**
+     * Пополнение бонусного счета пользователя
      * @param int $id
      * @param float $amount
      * @param string $comment
@@ -39,6 +43,7 @@ interface BillingInterface
     public function addUserBonus(int $id, float $amount, string $comment = 'зачисление бонусов'): bool;
 
     /**
+     * Перевод средств между пользователями
      * @param int $from
      * @param int $to
      * @param float $amount
@@ -48,12 +53,14 @@ interface BillingInterface
     public function transferUserRuble(int $from, int $to, float $amount, string $comment): bool;
 
     /**
+     * Баланс фирмы
      * @param int $id
      * @return float
      */
     public function getFirmBalanceRuble(int $id): float;
 
     /**
+     * Пополнение счета фирмы
      * @param int $id
      * @param float $amount
      * @param string $comment
@@ -62,6 +69,7 @@ interface BillingInterface
     public function addFirmRuble(int $id, float $amount, string $comment = 'пополнение счета фирмы'): bool;
 
     /**
+     * Перевод средств от пользователя фирме
      * @param int $user
      * @param int $firm
      * @param float $amount
@@ -71,6 +79,7 @@ interface BillingInterface
     public function transferUserFirmRuble(int $user, int $firm, float $amount, string $comment): bool;
 
     /**
+     * Перевод средств от фирмы пользователю
      * @param int $firm
      * @param int $user
      * @param float $amount

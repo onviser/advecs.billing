@@ -10,7 +10,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Billing\\": "src/",
+      "Advecs\\": "src/",
       "Tests\\": "tests/"
     }
   },
