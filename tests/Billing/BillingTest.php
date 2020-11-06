@@ -189,6 +189,12 @@ class BillingTest extends TestCase
                 ->setTime($time2, $time3));
         $this->assertCount(2, $posting);
 
+        $posting = $hBilling->getPosting(
+            (new Search())
+                ->setAccountType(Account::TYPE_USER)
+                ->setLimit(2, 4));
+        $this->assertCount(4, $posting);
+
         return true;
     }
 

@@ -130,6 +130,15 @@ class MemoryStorage implements StorageInterface
                 }
             }
         }
+
+        if ($hSearch->getLimit() > 0) {
+            $result = array_slice(
+                $result,
+                $hSearch->getOffset(),
+                $hSearch->getLimit()
+            );
+        }
+
         return $result;
     }
 }

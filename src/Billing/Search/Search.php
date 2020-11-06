@@ -11,8 +11,8 @@ class Search
     protected $account = 0;
     protected $accountType = 0;
 
-    protected $offset = 1;
-    protected $limit = 100;
+    protected $offset = 0;
+    protected $limit = 0;
 
     protected $timeFrom = 0;
     protected $timeTo = 0;
