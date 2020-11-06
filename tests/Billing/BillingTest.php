@@ -89,6 +89,34 @@ class BillingTest extends TestCase
         return true;
     }
 
+    /** @return bool */
+    public function testUserFirmTransfer(): bool
+    {
+        $hBilling = $this->getBilling();
+        $hBilling->addUserRuble(self::ID_USER_1, 1000);
+        $hBilling->addFirmRuble(self::ID_FIRM_1, 5000);
+
+        $hBilling->transferUserFirmRuble(self::ID_USER_1, self::ID_FIRM_1, 450, 'перевод от пользователя фирме');
+        $this->assertEquals(550, $hBilling->getUserBalanceRuble(self::ID_USER_1));
+        $this->assertEquals(5450, $hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
+
+        return true;
+    }
+
+    /** @return bool */
+    public function testFirmUserTransfer(): bool
+    {
+        $hBilling = $this->getBilling();
+        $hBilling->addUserRuble(self::ID_USER_1, 1000);
+        $hBilling->addFirmRuble(self::ID_FIRM_1, 5000);
+
+        $hBilling->transferFirmUserRuble(self::ID_FIRM_1, self::ID_USER_1, 400, 'перевод от фирмы пользователю');
+        $this->assertEquals(1400, $hBilling->getUserBalanceRuble(self::ID_USER_1));
+        $this->assertEquals(4600, $hBilling->getFirmBalanceRuble(self::ID_FIRM_1));
+
+        return true;
+    }
+
     /** @return Billing */
     public function getBilling(): Billing
     {

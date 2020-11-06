@@ -1,16 +1,16 @@
 {
-  "name": "advecs/billing",
+  "name": "billing",
   "type": "library",
   "description": "Billing",
   "keywords": [
-    "advecs"
+    "billing"
   ],
   "require": {
     "php": ">=7.2.0"
   },
   "autoload": {
     "psr-4": {
-      "Advecs\\": "src/",
+      "Billing\\": "src/",
       "Tests\\": "tests/"
     }
   },

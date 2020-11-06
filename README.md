@@ -1,8 +1,13 @@
 # Биллинг
+## 1. установка
+php composer.phar require jurych/billing  
+(версия PHP 7.2)
 
-## Запуск тестов
+## 2. использование
+
+
+## 3. запуск тестов 
 ./vendor/bin/phpunit
-
 
 ### Composer
 php composer.phar require --dev phpunit/phpunit  

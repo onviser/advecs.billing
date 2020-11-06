@@ -62,6 +62,24 @@ interface BillingInterface
     public function addFirmRuble(int $id, float $amount, string $comment = 'пополнение счета фирмы'): bool;
 
     /**
+     * @param int $user
+     * @param int $firm
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function transferUserFirmRuble(int $user, int $firm, float $amount, string $comment): bool;
+
+    /**
+     * @param int $firm
+     * @param int $user
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function transferFirmUserRuble(int $firm, int $user, float $amount, string $comment): bool;
+
+    /**
      * @param StorageInterface $hStorage
      * @return $this
      */
