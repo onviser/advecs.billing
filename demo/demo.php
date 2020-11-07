@@ -21,6 +21,14 @@ try {
 
     $user1 = 1;
     $hBilling->addUserRuble($user1, 3.14, 'пополнение счета');
+    echo "баланс пользователя в рублях [{$user1}]: " . $hBilling->getUserBalanceRuble($user1) . PHP_EOL;
+    echo "баланс пользователя в бонусах [{$user1}]: " . $hBilling->getUserBalanceBonus($user1) . PHP_EOL;
+
+    $user2 = 2;
+    $hBilling->addUserRuble($user2, 2.28, 'пополнение счета');
+    echo "баланс пользователя в рублях [{$user2}]: " . $hBilling->getUserBalanceRuble($user2) . PHP_EOL;
+    echo "баланс пользователя в бонусах [{$user2}]: " . $hBilling->getUserBalanceBonus($user2) . PHP_EOL;
+
 } catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
     if ($hException->getError() !== '') {
