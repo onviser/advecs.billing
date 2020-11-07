@@ -4,6 +4,7 @@ namespace Advecs\Billing;
 
 use Advecs\Billing\Account\Account;
 use Advecs\Billing\Account\User;
+use Advecs\Billing\Exception\NotEnoughException;
 use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\StorageInterface;
@@ -73,6 +74,7 @@ class Billing implements BillingInterface
      * @param float $amount
      * @param string $comment
      * @return bool
+     * @throws Exception\BillingException
      */
     public function transferUserRuble(int $from, int $to, float $amount, string $comment): bool
     {
@@ -81,6 +83,14 @@ class Billing implements BillingInterface
         $hPosting = (new Posting($amount, $comment))
             ->setFrom($hFrom)
             ->setTo($hTo);
+
+        // недостаточно средств
+        if ($hFrom->getBalance() < $amount) {
+            throw (new NotEnoughException())
+                ->setAccount($hFrom)
+                ->setPosting($hPosting);
+        }
+
         return $this->hStorage->transferRuble($hPosting);
     }
 
@@ -100,6 +110,7 @@ class Billing implements BillingInterface
      * @param float $amount
      * @param string $comment
      * @return bool
+     * @throws Exception\BillingException
      */
     public function transferFirmRuble(int $from, int $to, float $amount, string $comment): bool
     {
@@ -108,6 +119,14 @@ class Billing implements BillingInterface
         $hPosting = (new Posting($amount, $comment))
             ->setFrom($hFrom)
             ->setTo($hTo);
+
+        // недостаточно средств
+        if ($hFrom->getBalance() < $amount) {
+            throw (new NotEnoughException())
+                ->setAccount($hFrom)
+                ->setPosting($hPosting);
+        }
+
         return $this->hStorage->transferRuble($hPosting);
     }
 
@@ -131,6 +150,7 @@ class Billing implements BillingInterface
      * @param float $amount
      * @param string $comment
      * @return bool
+     * @throws Exception\BillingException
      */
     public function transferUserFirmRuble(int $user, int $firm, float $amount, string $comment): bool
     {
@@ -139,6 +159,14 @@ class Billing implements BillingInterface
         $hPosting = (new Posting($amount, $comment))
             ->setFrom($hFrom)
             ->setTo($hTo);
+
+        // недостаточно средств
+        if ($hFrom->getBalance() < $amount) {
+            throw (new NotEnoughException())
+                ->setAccount($hFrom)
+                ->setPosting($hPosting);
+        }
+
         return $this->hStorage->transferRuble($hPosting);
     }
 
@@ -148,6 +176,7 @@ class Billing implements BillingInterface
      * @param float $amount
      * @param string $comment
      * @return bool
+     * @throws Exception\BillingException
      */
     public function transferFirmUserRuble(int $firm, int $user, float $amount, string $comment): bool
     {
@@ -156,6 +185,14 @@ class Billing implements BillingInterface
         $hPosting = (new Posting($amount, $comment))
             ->setFrom($hFrom)
             ->setTo($hTo);
+
+        // недостаточно средств
+        if ($hFrom->getBalance() < $amount) {
+            throw (new NotEnoughException())
+                ->setAccount($hFrom)
+                ->setPosting($hPosting);
+        }
+
         return $this->hStorage->transferRuble($hPosting);
     }
 
