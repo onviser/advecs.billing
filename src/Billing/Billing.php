@@ -86,7 +86,7 @@ class Billing implements BillingInterface
 
         // недостаточно средств
         if ($hFrom->getBalance() < $amount) {
-            throw (new NotEnoughException())
+            throw (new NotEnoughException('недостаточно средств'))
                 ->setAccount($hFrom)
                 ->setPosting($hPosting);
         }
@@ -122,7 +122,7 @@ class Billing implements BillingInterface
 
         // недостаточно средств
         if ($hFrom->getBalance() < $amount) {
-            throw (new NotEnoughException())
+            throw (new NotEnoughException('недостаточно средств'))
                 ->setAccount($hFrom)
                 ->setPosting($hPosting);
         }
@@ -162,7 +162,7 @@ class Billing implements BillingInterface
 
         // недостаточно средств
         if ($hFrom->getBalance() < $amount) {
-            throw (new NotEnoughException())
+            throw (new NotEnoughException('недостаточно средств'))
                 ->setAccount($hFrom)
                 ->setPosting($hPosting);
         }
@@ -188,7 +188,7 @@ class Billing implements BillingInterface
 
         // недостаточно средств
         if ($hFrom->getBalance() < $amount) {
-            throw (new NotEnoughException())
+            throw (new NotEnoughException('недостаточно средств'))
                 ->setAccount($hFrom)
                 ->setPosting($hPosting);
         }
