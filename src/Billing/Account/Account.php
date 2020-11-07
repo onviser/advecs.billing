@@ -20,10 +20,12 @@ abstract class Account
     /**
      * Account constructor.
      * @param int $id
+     * @param float|int $balance
      */
-    public function __construct(int $id)
+    public function __construct(int $id, float $balance = 0)
     {
         $this->id = $id;
+        $this->balance = $balance;
     }
 
     /** @return int */

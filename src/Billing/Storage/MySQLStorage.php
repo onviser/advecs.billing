@@ -2,11 +2,16 @@
 
 namespace Advecs\Billing\Storage;
 
+use Advecs\Billing\Account\Account;
+use Advecs\Billing\Account\Firm;
+use Advecs\Billing\Account\User;
 use Advecs\Billing\Exception\MySQLException;
+use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\Search\Search;
 use mysqli;
 use mysqli_result;
 
-class MySQLStorage
+class MySQLStorage implements StorageInterface
 {
     protected $host = '';
     protected $user = '';
@@ -35,6 +40,63 @@ class MySQLStorage
     }
 
     /**
+     * @param int $id
+     * @param int $type
+     * @return Account
+     * @throws MySQLException
+     */
+    public function getAccount(int $id, int $type = Account::TYPE_USER): Account
+    {
+        $tableName = 'billing_account';
+
+        $sql = 'SELECT ';
+        $sql .= 'account_balance, ';
+        $sql .= 'account_balance_bonus, ';
+        $sql .= 'id ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        $sql .= 'WHERE id_account = "%d" ';
+        $sql .= 'AND id_type = "%d" ';
+        $sql = sprintf($sql, $id, $type);
+        $row = $this->getRow($sql);
+        if ($row) {
+            $account = intval($row['id']);
+            $balance = floatval($row['account_balance']);
+        } else {
+            $time = time();
+            $sql = 'INSERT INTO ' . $tableName . ' (id_type, id_account, account_add, account_update) ';
+            $sql .= 'VALUES ("%d", "%d", "%d", "%d")';
+            $sql = sprintf($sql, $type, $id, $time, $time);
+            $account = $this->insert($sql);
+            $balance = 0;
+        }
+
+        if ($type === Account::TYPE_FIRM) {
+            return new Firm($account, $balance);
+        }
+        return new User($account, $balance);
+    }
+
+    public function addRuble(Posting $hPostingCredit): bool
+    {
+        return true;
+    }
+
+    public function addBonus(Posting $hPostingCredit): bool
+    {
+        return true;
+    }
+
+    public function transferRuble(Posting $hPostingCredit): bool
+    {
+        return true;
+    }
+
+    public function getPosting(Search $hSearch): array
+    {
+        return [];
+    }
+
+    /**
      * @param string $sql
      * @return array
      * @throws MySQLException
@@ -43,7 +105,7 @@ class MySQLStorage
     {
         $result = $this->getQueryResult($sql);
         if ($result) {
-            return mysqli_fetch_assoc($result);
+            return mysqli_fetch_assoc($result) ?? [];
         }
         return [];
     }
@@ -104,10 +166,10 @@ class MySQLStorage
 
     /**
      * @param string $sql
-     * @return mysqli_result
+     * @return mysqli_result|true|false|null
      * @throws MySQLException
      */
-    protected function getQueryResult(string $sql): mysqli_result
+    protected function getQueryResult(string $sql)
     {
         $result = null;
         if (!$this->connection) {
