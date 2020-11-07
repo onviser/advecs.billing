@@ -4,6 +4,8 @@ namespace Tests\Billing;
 
 use Advecs\Billing\Account\Account;
 use Advecs\Billing\Billing;
+use Advecs\Billing\Exception\BillingException;
+use Advecs\Billing\Exception\NotEnoughException;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\MemoryStorage;
 use PHPUnit\Framework\TestCase;
@@ -197,6 +199,35 @@ class BillingTest extends TestCase
 
         return true;
     }
+
+    /**
+     * @return bool
+     * @throws BillingException
+     */
+    public function testExceptionUserRuble(): bool
+    {
+        $this->expectException(NotEnoughException::class);
+        $hBilling = $this->getBilling();
+        $hBilling->addUserRuble(self::ID_USER_1, 500, 'пополнение u1-1');
+        $hBilling->addUserRuble(self::ID_USER_2, 500, 'пополнение u2-1');
+        $hBilling->transferUserRuble(self::ID_USER_1, self::ID_USER_2, 600, 'списание');
+        return true;
+    }
+
+    /**
+     * @return bool
+     * @throws BillingException
+     */
+    public function testExceptionUserFirmRuble(): bool
+    {
+        $this->expectException(NotEnoughException::class);
+        $hBilling = $this->getBilling();
+        $hBilling->addUserRuble(self::ID_USER_1, 500, 'пополнение u1-1');
+        $hBilling->addUserRuble(self::ID_USER_2, 500, 'пополнение u2-1');
+        $hBilling->transferUserFirmRuble(self::ID_USER_1, self::ID_FIRM_2, 600, 'списание');
+        return true;
+    }
+
 
     /** @return Billing */
     public function getBilling(): Billing
