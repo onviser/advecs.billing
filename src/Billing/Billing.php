@@ -245,7 +245,6 @@ class Billing implements BillingInterface
      */
     public function reCountFirm(int $id): bool
     {
-        /** @var User $hAccount */
         $hAccount = $this->hStorage->getAccount($id, Account::TYPE_FIRM);
         $this->hStorage->reCount($hAccount);
         return true;

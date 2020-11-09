@@ -40,33 +40,33 @@ class MySQLStorage implements StorageInterface
     }
 
     /**
-     * @param int $id
+     * @param int $idExternal
      * @param int $type
      * @return Account
      * @throws MySQLException
      */
-    public function getAccount(int $id, int $type = Account::TYPE_USER): Account
+    public function getAccount(int $idExternal, int $type = Account::TYPE_USER): Account
     {
         $tableName = 'billing_account';
 
         $sql = 'SELECT ';
         $sql .= 'account_balance, ';
         $sql .= 'account_balance_bonus, ';
-        $sql .= 'id ';
+        $sql .= 'id_account ';
         $sql .= 'FROM ' . $tableName . ' ';
-        $sql .= 'WHERE id_account = "%d" ';
+        $sql .= 'WHERE id_external = "%d" ';
         $sql .= 'AND id_type = "%d" ';
-        $sql = sprintf($sql, $id, $type);
+        $sql = sprintf($sql, $idExternal, $type);
         $row = $this->getRow($sql);
         if ($row) {
-            $account = intval($row['id']);
+            $account = intval($row['id_account']);
             $balance = floatval($row['account_balance']);
             $balance_bonus = floatval($row['account_balance_bonus']);
         } else {
             $time = time();
-            $sql = 'INSERT INTO ' . $tableName . ' (id_type, id_account, account_add, account_update) ';
+            $sql = 'INSERT INTO ' . $tableName . ' (id_type, id_external, account_add, account_update) ';
             $sql .= 'VALUES ("%d", "%d", "%d", "%d")';
-            $sql = sprintf($sql, $type, $id, $time, $time);
+            $sql = sprintf($sql, $type, $idExternal, $time, $time);
             $account = $this->insert($sql);
             $balance = 0;
             $balance_bonus = 0;

@@ -20,26 +20,41 @@ try {
         ));
 
     $user1 = 1;
-    $hBilling->addUserRuble($user1, 1.11, 'пополнение счета');
-    $hBilling->addUserBonus($user1, 3.33, 'пополнение бонусного счета');
+    $hBilling->addUserRuble($user1, 1.0, 'пополнение счета пользователя');
+    $hBilling->addUserBonus($user1, 3.0, 'пополнение бонусного счета пользователя');
 
     $user2 = 2;
-    $hBilling->addUserRuble($user2, 2.22, 'пополнение счета');
-    $hBilling->addUserBonus($user2, 4.44, 'пополнение бонусного счета');
+    $hBilling->addUserRuble($user2, 2.0, 'пополнение счета пользователя');
+    $hBilling->addUserBonus($user2, 4.0, 'пополнение бонусного счета пользователя');
 
-    // пересчет баланса
+    $firm1 = 11;
+    $hBilling->addFirmRuble($firm1, 500, 'пополнение счета фирмы');
+
+    $firm2 = 22;
+    $hBilling->addFirmRuble($firm2, 700, 'пополнение счета фирмы');
+
+    // перевод со счета на счет (пользователи)
+    $hBilling->transferUserRuble($user1, $user2, 0.10, 'перевод средств со счета на счет, ' . $user1 . ' -> ' . $user2);
+    $hBilling->transferUserRuble($user2, $user1, 0.50, 'перевод средств со счета на счет, ' . $user2 . ' -> ' . $user1);
+
+    // перевод со счета на счет (фирмы)
+    $hBilling->transferFirmRuble($firm1, $firm2, 100, 'перевод средств со счета на счет, ' . $firm1 . ' -> ' . $firm2);
+    $hBilling->transferFirmRuble($firm2, $firm1, 150, 'перевод средств со счета на счет, ' . $firm2 . ' -> ' . $firm1);
+
+    // пересчет баланса (пользователи)
     $hBilling->reCountUser($user1);
     $hBilling->reCountUser($user2);
 
-    // перевод со счета на счет
-    $hBilling->transferUserRuble($user1, $user2, 0.10, 'перевод средств со счета на счет, ' . $user1 . ' -> ' . $user2);
-    $hBilling->transferUserRuble($user1, $user2, 0.20, 'перевод средств со счета на счет, ' . $user1 . ' -> ' . $user2);
-    $hBilling->transferUserRuble($user2, $user1, 0.30, 'перевод средств со счета на счет, ' . $user2 . ' -> ' . $user1);
+    // пересчет баланса (фирмы)
+    $hBilling->reCountFirm($firm1);
+    $hBilling->reCountFirm($firm2);
 
     echo "баланс пользователя в рублях [{$user1}]: " . $hBilling->getUserBalanceRuble($user1) . PHP_EOL;
     echo "баланс пользователя в бонусах [{$user1}]: " . $hBilling->getUserBalanceBonus($user1) . PHP_EOL;
     echo "баланс пользователя в рублях [{$user2}]: " . $hBilling->getUserBalanceRuble($user2) . PHP_EOL;
     echo "баланс пользователя в бонусах [{$user2}]: " . $hBilling->getUserBalanceBonus($user2) . PHP_EOL;
+    echo "баланс фирмы в рублях [{$firm1}]: " . $hBilling->getFirmBalanceRuble($firm1) . PHP_EOL;
+    echo "баланс фирмы в рублях [{$firm2}]: " . $hBilling->getFirmBalanceRuble($firm2) . PHP_EOL;
 
 } catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
