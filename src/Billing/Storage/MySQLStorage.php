@@ -76,13 +76,50 @@ class MySQLStorage implements StorageInterface
         return new User($account, $balance);
     }
 
+    /**
+     * @param Posting $hPostingCredit
+     * @return bool
+     * @throws MySQLException
+     */
     public function addRuble(Posting $hPostingCredit): bool
     {
+        try {
+            $hAccount = $hPostingCredit->getTo();
+            $hAccount->changeBalance($hPostingCredit->getAmount());
+            $this->query('SET AUTOCOMMIT = 0');
+            $this->savePosting($hAccount, $hPostingCredit);
+            $this->saveBalance($hAccount);
+            $this->query('COMMIT');
+            $this->query('SET AUTOCOMMIT = 1');
+        } catch (MySQLException $hException) {
+            $this->query('ROLLBACK');
+            $this->query('SET AUTOCOMMIT = 1');
+            throw $hException;
+        }
         return true;
     }
 
+    /**
+     * @param Posting $hPostingCredit
+     * @return bool
+     * @throws MySQLException
+     */
     public function addBonus(Posting $hPostingCredit): bool
     {
+        try {
+            /** @var User $hUser */
+            $hUser = $hPostingCredit->getTo();
+            $hUser->changeBalance($hPostingCredit->getAmount());
+            $this->query('SET AUTOCOMMIT = 0');
+            $this->savePostingBonus($hUser, $hPostingCredit);
+            $this->saveBalance($hUser);
+            $this->query('COMMIT');
+            $this->query('SET AUTOCOMMIT = 1');
+        } catch (MySQLException $hException) {
+            $this->query('ROLLBACK');
+            $this->query('SET AUTOCOMMIT = 1');
+            throw $hException;
+        }
         return true;
     }
 
@@ -95,6 +132,77 @@ class MySQLStorage implements StorageInterface
     {
         return [];
     }
+
+    public function reCountRuble(Account $hAccount): float
+    {
+        return 0;
+    }
+
+    public function reCountBonus(Account $hAccount): float
+    {
+        return 0;
+    }
+
+    /**
+     * @param Account $hAccount
+     * @param Posting $hPosting
+     * @return int
+     * @throws MySQLException
+     */
+    protected function savePosting(Account $hAccount, Posting $hPosting)
+    {
+        $tableName = 'billing_posting';
+        $sql = 'INSERT INTO ' . $tableName . ' (id_account, posting_amount, posting_comment, posting_day, posting_add) ';
+        $sql .= 'VALUES ("%d", "%f", "%s", "%d", "%f")';
+        $sql = sprintf($sql,
+            $hAccount->getId(),
+            $hPosting->getAmount(),
+            $hPosting->getComment(),
+            strtotime(date('Y-m-d')),
+            microtime(true)
+        );
+        return $this->insert($sql);
+    }
+
+    /**
+     * @param User $hUser
+     * @param Posting $hPosting
+     * @return int
+     * @throws MySQLException
+     */
+    protected function savePostingBonus(User $hUser, Posting $hPosting)
+    {
+        $tableName = 'billing_posting_bonus';
+        $sql = 'INSERT INTO ' . $tableName . ' (id_account, posting_amount, posting_comment, posting_day, posting_add) ';
+        $sql .= 'VALUES ("%d", "%f", "%s", "%d", "%f")';
+        $sql = sprintf($sql,
+            $hUser->getId(),
+            $hPosting->getAmount(),
+            $hPosting->getComment(),
+            strtotime(date('Y-m-d')),
+            microtime(true)
+        );
+        return $this->insert($sql);
+    }
+
+    /**
+     * @param Account $hAccount
+     * @return bool
+     * @throws MySQLException
+     */
+    protected function saveBalance(Account $hAccount)
+    {
+        $tableName = 'billing_account';
+        $sql = 'UPDATE ' . $tableName . ' ';
+        $sql .= 'SET account_balance = "' . $hAccount->getBalance() . '" ';
+        if ($hAccount instanceof User) {
+            $sql .= ', account_balance_bonus = "' . $hAccount->getBalanceBonus() . '" ';
+        }
+        $sql .= 'WHERE id_account = "' . $hAccount->getId() . '" ';
+        return $this->update($sql);
+    }
+
+    // ---------- функции для работы с базой ----------
 
     /**
      * @param string $sql
@@ -165,6 +273,20 @@ class MySQLStorage implements StorageInterface
     }
 
     /**
+     * @param $sql
+     * @return bool
+     * @throws MySQLException
+     */
+    public function query($sql): bool
+    {
+        $result = $this->getQueryResult($sql);
+        if ($result) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @param string $sql
      * @return mysqli_result|true|false|null
      * @throws MySQLException
@@ -204,6 +326,7 @@ class MySQLStorage implements StorageInterface
                 ->setError(mysqli_connect_error())
                 ->setErrorNumber(mysqli_connect_errno());
         }
+        $this->query('SET NAMES utf8');
         return true;
     }
 
