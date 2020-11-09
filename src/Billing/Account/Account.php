@@ -34,6 +34,16 @@ abstract class Account
         return $this->id;
     }
 
+    /**
+     * @param float $balance
+     * @return $this
+     */
+    public function setBalance(float $balance): self
+    {
+        $this->balance = $balance;
+        return $this;
+    }
+
     /** @return float */
     public function getBalance(): float
     {

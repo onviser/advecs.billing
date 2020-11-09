@@ -148,7 +148,13 @@ class MemoryStorage implements StorageInterface
      */
     public function reCountRuble(Account $hAccount): float
     {
-        return 0;
+        /** @var Posting $hPosting */
+        $amount = 0;
+        foreach ($this->postingRuble[$hAccount->getType()][$hAccount->getId()] as $hPosting) {
+            $amount += $hPosting->getAmount();
+        }
+        $hAccount->setBalance($amount);
+        return $amount;
     }
 
     /**
@@ -157,6 +163,12 @@ class MemoryStorage implements StorageInterface
      */
     public function reCountBonus(Account $hAccount): float
     {
-        return 0;
+        /** @var Posting $hPosting */
+        $amount = 0;
+        foreach ($this->postingBonus[$hAccount->getType()][$hAccount->getId()] as $hPosting) {
+            $amount += $hPosting->getAmount();
+        }
+        $hAccount->setBalance($amount);
+        return $amount;
     }
 }
