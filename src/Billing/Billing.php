@@ -207,6 +207,30 @@ class Billing implements BillingInterface
     }
 
     /**
+     * @param int $id
+     * @return float
+     */
+    public function reCountUserRuble(int $id): float
+    {
+        /** @var User $hAccount */
+        $hAccount = $this->hStorage->getAccount($id, Account::TYPE_USER);
+        $this->hStorage->reCountRuble($hAccount);
+        return $hAccount->getBalance();
+    }
+
+    /**
+     * @param int $id
+     * @return float
+     */
+    public function reCountUserBonus(int $id): float
+    {
+        /** @var User $hAccount */
+        $hAccount = $this->hStorage->getAccount($id, Account::TYPE_USER);
+        $this->hStorage->reCountBonus($hAccount);
+        return $hAccount->getBalanceBonus();
+    }
+
+    /**
      * @param StorageInterface $hStorage
      * @return $this
      */

@@ -141,4 +141,22 @@ class MemoryStorage implements StorageInterface
 
         return $result;
     }
+
+    /**
+     * @param Account $hAccount
+     * @return float
+     */
+    public function reCountRuble(Account $hAccount): float
+    {
+        return 0;
+    }
+
+    /**
+     * @param Account $hAccount
+     * @return float
+     */
+    public function reCountBonus(Account $hAccount): float
+    {
+        return 0;
+    }
 }

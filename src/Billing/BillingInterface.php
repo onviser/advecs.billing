@@ -98,6 +98,18 @@ interface BillingInterface
     public function getPosting(Search $hSearch): array;
 
     /**
+     * @param int $id
+     * @return float
+     */
+    public function reCountUserRuble(int $id): float;
+
+    /**
+     * @param int $id
+     * @return float
+     */
+    public function reCountUserBonus(int $id): float;
+
+    /**
      * @param StorageInterface $hStorage
      * @return $this
      */

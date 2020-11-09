@@ -42,4 +42,16 @@ interface StorageInterface
      * @return Posting[]
      */
     public function getPosting(Search $hSearch): array;
+
+    /**
+     * @param Account $hAccount
+     * @return float
+     */
+    public function reCountRuble(Account $hAccount): float;
+
+    /**
+     * @param Account $hAccount
+     * @return float
+     */
+    public function reCountBonus(Account $hAccount): float;
 }
