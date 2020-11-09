@@ -105,4 +105,10 @@ class Posting
     {
         return $this->time;
     }
+
+    /** @return int */
+    public function getDay(): int
+    {
+        return strtotime(date('Y-m-d', intval($this->time)));
+    }
 }

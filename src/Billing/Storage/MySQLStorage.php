@@ -126,8 +126,40 @@ class MySQLStorage implements StorageInterface
         return true;
     }
 
+    /**
+     * @param Posting $hPostingCredit
+     * @return bool
+     * @throws MySQLException
+     */
     public function transferRuble(Posting $hPostingCredit): bool
     {
+        try {
+            $this->query('SET AUTOCOMMIT = 0');
+
+            $hFrom = $hPostingCredit->getFrom();
+            $hTo = $hPostingCredit->getTo();
+
+            // списание
+            $hPostingDebit = (new Posting(-1 * $hPostingCredit->getAmount(), $hPostingCredit->getComment()))
+                ->setFrom($hFrom)
+                ->setTo($hTo);
+            $this->savePosting($hFrom, $hPostingDebit);
+            $hFrom->changeBalance($hPostingDebit->getAmount());
+            $this->saveBalance($hFrom);
+
+            // зачисление
+            $this->savePosting($hTo, $hPostingCredit);
+            $hTo->changeBalance($hPostingCredit->getAmount());
+            $this->saveBalance($hTo);
+
+            $this->query('COMMIT');
+            $this->query('SET AUTOCOMMIT = 1');
+
+        } catch (MySQLException $hException) {
+            $this->query('ROLLBACK');
+            $this->query('SET AUTOCOMMIT = 1');
+            throw $hException;
+        }
         return true;
     }
 
@@ -223,12 +255,12 @@ class MySQLStorage implements StorageInterface
         $sql .= 'VALUES (' . implode(', ', $insert) . ')';
         $sql = sprintf($sql,
             intval($hAccount->getId()),
-            $hPosting->getAmount() > 0 && $hPosting->getFrom() ? $hPosting->getFrom()->getId() : 0,
-            $hPosting->getAmount() < 0 && $hPosting->getTo() ? $hPosting->getTo()->getId() : 0,
+            $hPosting->getAmount() > 0 && $hPosting->getFrom() ? $hPosting->getFrom()->getId() : 0, // зачисление с какого то счета
+            $hPosting->getAmount() < 0 && $hPosting->getTo() ? $hPosting->getTo()->getId() : 0, // перевод на какой то счет
             floatval($hPosting->getAmount()),
             strval($hPosting->getComment()),
-            strtotime(date('Y-m-d')),
-            microtime(true)
+            $hPosting->getDay(),
+            $hPosting->getTime()
         );
         return $this->insert($sql);
     }
