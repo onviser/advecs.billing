@@ -33,8 +33,8 @@ CREATE TABLE billing_posting
     posting_add     DECIMAL(12, 2)   DEFAULT 0
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT 'проводки в рублях';
-ALTER TABLE billing_posting
-    ADD INDEX (id_account);
+ALTER TABLE billing_posting ADD INDEX (id_account);
+ALTER TABLE billing_posting ADD INDEX (posting_day);
 
 
 
@@ -49,5 +49,5 @@ CREATE TABLE billing_posting_bonus
     posting_add     DECIMAL(12, 2)   DEFAULT 0
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT 'проводки в бонусах';
-ALTER TABLE billing_posting_bonus
-    ADD INDEX (id_account);
+ALTER TABLE billing_posting_bonus ADD INDEX (id_account);
+ALTER TABLE billing_posting_bonus ADD INDEX (posting_day);

@@ -11,6 +11,16 @@ class User extends Account
     /** @var float */
     protected $balanceBonus = 0.0;
 
+    /**
+     * @param float $balance
+     * @return $this
+     */
+    public function setBalanceBonus(float $balance): self
+    {
+        $this->balanceBonus = $balance;
+        return $this;
+    }
+
     /** @return float */
     public function getBalanceBonus(): float
     {

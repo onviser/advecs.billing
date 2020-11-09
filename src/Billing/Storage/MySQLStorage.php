@@ -61,6 +61,7 @@ class MySQLStorage implements StorageInterface
         if ($row) {
             $account = intval($row['id']);
             $balance = floatval($row['account_balance']);
+            $balance_bonus = floatval($row['account_balance_bonus']);
         } else {
             $time = time();
             $sql = 'INSERT INTO ' . $tableName . ' (id_type, id_account, account_add, account_update) ';
@@ -68,12 +69,14 @@ class MySQLStorage implements StorageInterface
             $sql = sprintf($sql, $type, $id, $time, $time);
             $account = $this->insert($sql);
             $balance = 0;
+            $balance_bonus = 0;
         }
 
         if ($type === Account::TYPE_FIRM) {
             return new Firm($account, $balance);
         }
-        return new User($account, $balance);
+        return (new User($account, $balance))
+            ->setBalanceBonus($balance_bonus);
     }
 
     /**
@@ -86,6 +89,7 @@ class MySQLStorage implements StorageInterface
         try {
             $hAccount = $hPostingCredit->getTo();
             $hAccount->changeBalance($hPostingCredit->getAmount());
+
             $this->query('SET AUTOCOMMIT = 0');
             $this->savePosting($hAccount, $hPostingCredit);
             $this->saveBalance($hAccount);
@@ -109,10 +113,11 @@ class MySQLStorage implements StorageInterface
         try {
             /** @var User $hUser */
             $hUser = $hPostingCredit->getTo();
-            $hUser->changeBalance($hPostingCredit->getAmount());
+            $hUser->changeBalanceBonus($hPostingCredit->getAmount());
+
             $this->query('SET AUTOCOMMIT = 0');
             $this->savePostingBonus($hUser, $hPostingCredit);
-            $this->saveBalance($hUser);
+            $this->saveBalanceBonus($hUser);
             $this->query('COMMIT');
             $this->query('SET AUTOCOMMIT = 1');
         } catch (MySQLException $hException) {
@@ -195,9 +200,20 @@ class MySQLStorage implements StorageInterface
         $tableName = 'billing_account';
         $sql = 'UPDATE ' . $tableName . ' ';
         $sql .= 'SET account_balance = "' . $hAccount->getBalance() . '" ';
-        if ($hAccount instanceof User) {
-            $sql .= ', account_balance_bonus = "' . $hAccount->getBalanceBonus() . '" ';
-        }
+        $sql .= 'WHERE id_account = "' . $hAccount->getId() . '" ';
+        return $this->update($sql);
+    }
+
+    /**
+     * @param User $hAccount
+     * @return bool
+     * @throws MySQLException
+     */
+    protected function saveBalanceBonus(User $hAccount)
+    {
+        $tableName = 'billing_account';
+        $sql = 'UPDATE ' . $tableName . ' ';
+        $sql .= 'SET account_balance_bonus = "' . $hAccount->getBalanceBonus() . '" ';
         $sql .= 'WHERE id_account = "' . $hAccount->getId() . '" ';
         return $this->update($sql);
     }
