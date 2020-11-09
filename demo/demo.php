@@ -20,18 +20,18 @@ try {
         ));
 
     $user1 = 1;
-    $hBilling->addUserRuble($user1, 1.0, 'пополнение счета пользователя');
-    $hBilling->addUserBonus($user1, 3.0, 'пополнение бонусного счета пользователя');
+    //$hBilling->addUserRuble($user1, 1.0, 'пополнение счета пользователя');
+    //$hBilling->addUserBonus($user1, 3.0, 'пополнение бонусного счета пользователя');
 
     $user2 = 2;
-    $hBilling->addUserRuble($user2, 2.0, 'пополнение счета пользователя');
-    $hBilling->addUserBonus($user2, 4.0, 'пополнение бонусного счета пользователя');
+    //$hBilling->addUserRuble($user2, 2.0, 'пополнение счета пользователя');
+    //$hBilling->addUserBonus($user2, 4.0, 'пополнение бонусного счета пользователя');
 
     $firm1 = 11;
-    $hBilling->addFirmRuble($firm1, 500, 'пополнение счета фирмы');
+    //$hBilling->addFirmRuble($firm1, 500, 'пополнение счета фирмы');
 
     $firm2 = 22;
-    $hBilling->addFirmRuble($firm2, 700, 'пополнение счета фирмы');
+    //$hBilling->addFirmRuble($firm2, 700, 'пополнение счета фирмы');
 
     // перевод со счета на счет (пользователи)
     $hBilling->transferUserRuble($user1, $user2, 0.10, 'перевод средств со счета на счет, ' . $user1 . ' -> ' . $user2);
@@ -40,6 +40,11 @@ try {
     // перевод со счета на счет (фирмы)
     $hBilling->transferFirmRuble($firm1, $firm2, 100, 'перевод средств со счета на счет, ' . $firm1 . ' -> ' . $firm2);
     $hBilling->transferFirmRuble($firm2, $firm1, 150, 'перевод средств со счета на счет, ' . $firm2 . ' -> ' . $firm1);
+
+    $hBilling->transferUserFirmRuble($user1, $firm1, 0.75, 'перевод средств от пользователя к фирме, ' . $user1 . ' -> ' . $firm1);
+    $hBilling->transferUserFirmRuble($user1, $firm1, 0.25, 'перевод средств от пользователя к фирме, ' . $user1 . ' -> ' . $firm1);
+    $hBilling->transferFirmUserRuble($firm1, $user1, 70, 'перевод средств от фирмы к пользователю, ' . $firm1 . ' -> ' . $user1);
+    $hBilling->transferFirmUserRuble($firm1, $user1, 10, 'перевод средств от фирмы к пользователю, ' . $firm1 . ' -> ' . $user1);
 
     // пересчет баланса (пользователи)
     $hBilling->reCountUser($user1);
