@@ -19,6 +19,7 @@ class Billing implements BillingInterface
     protected $hStorage;
 
     /**
+     * Баланс пользователя в рублях
      * @param int $id
      * @return float
      */
@@ -29,6 +30,7 @@ class Billing implements BillingInterface
     }
 
     /**
+     * Баланс пользователя в бонусах
      * @param int $id
      * @return float
      */
@@ -40,6 +42,7 @@ class Billing implements BillingInterface
     }
 
     /**
+     * Пополнение рублевого счета пользователя
      * @param int $id
      * @param float $amount
      * @param string $comment
@@ -54,6 +57,7 @@ class Billing implements BillingInterface
     }
 
     /**
+     * Пополнение бонусного счета пользователя
      * @param int $id
      * @param float $amount
      * @param string $comment
@@ -95,6 +99,7 @@ class Billing implements BillingInterface
     }
 
     /**
+     * Баланс фирмы
      * @param int $id
      * @return float
      */
@@ -105,6 +110,22 @@ class Billing implements BillingInterface
     }
 
     /**
+     * Пополнение счета фирмы
+     * @param int $id
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function addFirmRuble(int $id, float $amount, string $comment = 'пополнение счета фирмы'): bool
+    {
+        $hFirm = $this->hStorage->getAccount($id, Account::TYPE_FIRM);
+        $hPosting = (new Posting($amount, $comment))
+            ->setTo($hFirm);
+        return $this->hStorage->addRuble($hPosting);
+    }
+
+    /**
+     * Перевод средств от фирмы к фирме
      * @param int $from
      * @param int $to
      * @param float $amount
@@ -131,20 +152,7 @@ class Billing implements BillingInterface
     }
 
     /**
-     * @param int $id
-     * @param float $amount
-     * @param string $comment
-     * @return bool
-     */
-    public function addFirmRuble(int $id, float $amount, string $comment = 'пополнение счета фирмы'): bool
-    {
-        $hFirm = $this->hStorage->getAccount($id, Account::TYPE_FIRM);
-        $hPosting = (new Posting($amount, $comment))
-            ->setTo($hFirm);
-        return $this->hStorage->addRuble($hPosting);
-    }
-
-    /**
+     * Перевод средств от пользователя фирме
      * @param int $user
      * @param int $firm
      * @param float $amount
@@ -171,6 +179,7 @@ class Billing implements BillingInterface
     }
 
     /**
+     * Перевод средств от фирмы пользователю
      * @param int $firm
      * @param int $user
      * @param float $amount
@@ -207,27 +216,39 @@ class Billing implements BillingInterface
     }
 
     /**
-     * @param int $id
-     * @return float
+     * Список проводок по бонусному счету
+     * @param Search $hSearch
+     * @return Posting[]
      */
-    public function reCountUserRuble(int $id): float
+    public function getPostingBonus(Search $hSearch): array
     {
-        /** @var User $hAccount */
-        $hAccount = $this->hStorage->getAccount($id, Account::TYPE_USER);
-        $this->hStorage->reCountRuble($hAccount);
-        return $hAccount->getBalance();
+        return $this->hStorage->getPostingBonus($hSearch);
     }
 
     /**
+     * Пересчет баланса (рубли, бонусы) пользователя
      * @param int $id
-     * @return float
+     * @return bool
      */
-    public function reCountUserBonus(int $id): float
+    public function reCountUser(int $id): bool
     {
         /** @var User $hAccount */
         $hAccount = $this->hStorage->getAccount($id, Account::TYPE_USER);
-        $this->hStorage->reCountBonus($hAccount);
-        return $hAccount->getBalanceBonus();
+        $this->hStorage->reCount($hAccount);
+        return true;
+    }
+
+    /**
+     * Пересчет баланса (рубли, бонусы) фирмы
+     * @param int $id
+     * @return bool
+     */
+    public function reCountFirm(int $id): bool
+    {
+        /** @var User $hAccount */
+        $hAccount = $this->hStorage->getAccount($id, Account::TYPE_FIRM);
+        $this->hStorage->reCount($hAccount);
+        return true;
     }
 
     /**

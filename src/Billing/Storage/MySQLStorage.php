@@ -73,10 +73,9 @@ class MySQLStorage implements StorageInterface
         }
 
         if ($type === Account::TYPE_FIRM) {
-            return new Firm($account, $balance);
+            return new Firm($account, $balance, $balance_bonus);
         }
-        return (new User($account, $balance))
-            ->setBalanceBonus($balance_bonus);
+        return new User($account, $balance, $balance_bonus);
     }
 
     /**
@@ -111,13 +110,12 @@ class MySQLStorage implements StorageInterface
     public function addBonus(Posting $hPostingCredit): bool
     {
         try {
-            /** @var User $hUser */
-            $hUser = $hPostingCredit->getTo();
-            $hUser->changeBalanceBonus($hPostingCredit->getAmount());
+            $hAccount = $hPostingCredit->getTo();
+            $hAccount->changeBalanceBonus($hPostingCredit->getAmount());
 
             $this->query('SET AUTOCOMMIT = 0');
-            $this->savePostingBonus($hUser, $hPostingCredit);
-            $this->saveBalanceBonus($hUser);
+            $this->savePostingBonus($hAccount, $hPostingCredit);
+            $this->saveBalance($hAccount);
             $this->query('COMMIT');
             $this->query('SET AUTOCOMMIT = 1');
         } catch (MySQLException $hException) {
@@ -138,14 +136,45 @@ class MySQLStorage implements StorageInterface
         return [];
     }
 
-    public function reCountRuble(Account $hAccount): float
+    public function getPostingBonus(Search $hSearch): array
     {
-        return 0;
+        return [];
     }
 
-    public function reCountBonus(Account $hAccount): float
+    /**
+     * @param Account $hAccount
+     * @return bool
+     * @throws MySQLException
+     */
+    public function reCount(Account $hAccount): bool
     {
-        return 0;
+        $balance = 0;
+        $tableName = 'billing_posting';
+        $sql = 'SELECT ';
+        $sql .= 'SUM(posting_amount) AS amount ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        $sql .= 'WHERE id_account = "' . $hAccount->getId() . '"';
+        $row = $this->getRow($sql);
+        if ($row) {
+            $balance = floatval($row['amount']);
+        }
+        $hAccount->setBalance($balance);
+
+        $balanceBonus = 0;
+        $tableNameBonus = 'billing_posting_bonus';
+        $sql = 'SELECT ';
+        $sql .= 'SUM(posting_amount) AS amount ';
+        $sql .= 'FROM ' . $tableNameBonus . ' ';
+        $sql .= 'WHERE id_account = "' . $hAccount->getId() . '"';
+        $row = $this->getRow($sql);
+        if ($row) {
+            $balanceBonus = floatval($row['amount']);
+        }
+        $hAccount->setBalanceBonus($balanceBonus);
+
+        $this->saveBalance($hAccount);
+
+        return true;
     }
 
     /**
@@ -157,33 +186,47 @@ class MySQLStorage implements StorageInterface
     protected function savePosting(Account $hAccount, Posting $hPosting)
     {
         $tableName = 'billing_posting';
-        $sql = 'INSERT INTO ' . $tableName . ' (id_account, posting_amount, posting_comment, posting_day, posting_add) ';
-        $sql .= 'VALUES ("%d", "%f", "%s", "%d", "%f")';
-        $sql = sprintf($sql,
-            $hAccount->getId(),
-            $hPosting->getAmount(),
-            $hPosting->getComment(),
-            strtotime(date('Y-m-d')),
-            microtime(true)
-        );
-        return $this->insert($sql);
+        return $this->savePostingCommon($hAccount, $hPosting, $tableName);
     }
 
     /**
-     * @param User $hUser
+     * @param Account $hAccount
      * @param Posting $hPosting
      * @return int
      * @throws MySQLException
      */
-    protected function savePostingBonus(User $hUser, Posting $hPosting)
+    protected function savePostingBonus(Account $hAccount, Posting $hPosting)
     {
         $tableName = 'billing_posting_bonus';
-        $sql = 'INSERT INTO ' . $tableName . ' (id_account, posting_amount, posting_comment, posting_day, posting_add) ';
-        $sql .= 'VALUES ("%d", "%f", "%s", "%d", "%f")';
+        return $this->savePostingCommon($hAccount, $hPosting, $tableName);
+    }
+
+    /**
+     * @param Account $hAccount
+     * @param Posting $hPosting
+     * @param $tableName
+     * @return int
+     * @throws MySQLException
+     */
+    protected function savePostingCommon(Account $hAccount, Posting $hPosting, $tableName)
+    {
+        $insert = [
+            'id_account'      => '"%d"',
+            'id_from'         => '"%d"',
+            'id_to'           => '"%d"',
+            'posting_amount'  => '"%f"',
+            'posting_comment' => '"%s"',
+            'posting_day'     => '"%d"',
+            'posting_add'     => '"%f"'
+        ];
+        $sql = 'INSERT INTO ' . $tableName . ' (' . implode(', ', array_keys($insert)) . ') ';
+        $sql .= 'VALUES (' . implode(', ', $insert) . ')';
         $sql = sprintf($sql,
-            $hUser->getId(),
-            $hPosting->getAmount(),
-            $hPosting->getComment(),
+            intval($hAccount->getId()),
+            $hPosting->getAmount() > 0 && $hPosting->getFrom() ? $hPosting->getFrom()->getId() : 0,
+            $hPosting->getAmount() < 0 && $hPosting->getTo() ? $hPosting->getTo()->getId() : 0,
+            floatval($hPosting->getAmount()),
+            strval($hPosting->getComment()),
             strtotime(date('Y-m-d')),
             microtime(true)
         );
@@ -199,21 +242,8 @@ class MySQLStorage implements StorageInterface
     {
         $tableName = 'billing_account';
         $sql = 'UPDATE ' . $tableName . ' ';
-        $sql .= 'SET account_balance = "' . $hAccount->getBalance() . '" ';
-        $sql .= 'WHERE id_account = "' . $hAccount->getId() . '" ';
-        return $this->update($sql);
-    }
-
-    /**
-     * @param User $hAccount
-     * @return bool
-     * @throws MySQLException
-     */
-    protected function saveBalanceBonus(User $hAccount)
-    {
-        $tableName = 'billing_account';
-        $sql = 'UPDATE ' . $tableName . ' ';
-        $sql .= 'SET account_balance_bonus = "' . $hAccount->getBalanceBonus() . '" ';
+        $sql .= 'SET account_balance = "' . $hAccount->getBalance() . '", ';
+        $sql .= 'account_balance_bonus = "' . $hAccount->getBalanceBonus() . '" ';
         $sql .= 'WHERE id_account = "' . $hAccount->getId() . '" ';
         return $this->update($sql);
     }

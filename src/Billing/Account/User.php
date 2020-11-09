@@ -8,35 +8,6 @@ namespace Advecs\Billing\Account;
  */
 class User extends Account
 {
-    /** @var float */
-    protected $balanceBonus = 0.0;
-
-    /**
-     * @param float $balance
-     * @return $this
-     */
-    public function setBalanceBonus(float $balance): self
-    {
-        $this->balanceBonus = $balance;
-        return $this;
-    }
-
-    /** @return float */
-    public function getBalanceBonus(): float
-    {
-        return $this->balanceBonus;
-    }
-
-    /**
-     * @param float $amount
-     * @return float
-     */
-    public function changeBalanceBonus(float $amount): float
-    {
-        $this->balanceBonus += $amount;
-        return $this->balanceBonus;
-    }
-
     /** @return int */
     public function getType(): int
     {

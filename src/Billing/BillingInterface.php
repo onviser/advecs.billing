@@ -71,6 +71,17 @@ interface BillingInterface
     public function addFirmRuble(int $id, float $amount, string $comment = 'пополнение счета фирмы'): bool;
 
     /**
+     * Перевод средств от фирмы к фирме
+     * @param int $from
+     * @param int $to
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     * @throws Exception\BillingException
+     */
+    public function transferFirmRuble(int $from, int $to, float $amount, string $comment): bool;
+
+    /**
      * Перевод средств от пользователя фирме
      * @param int $user
      * @param int $firm
@@ -98,16 +109,25 @@ interface BillingInterface
     public function getPosting(Search $hSearch): array;
 
     /**
-     * @param int $id
-     * @return float
+     * Список проводок по бонусному счету
+     * @param Search $hSearch
+     * @return Posting[]
      */
-    public function reCountUserRuble(int $id): float;
+    public function getPostingBonus(Search $hSearch): array;
 
     /**
+     * Пересчет баланса (рубли, бонусы) пользователя
      * @param int $id
-     * @return float
+     * @return bool
      */
-    public function reCountUserBonus(int $id): float;
+    public function reCountUser(int $id): bool;
+
+    /**
+     * Пересчет баланса (рубли, бонусы) фирмы
+     * @param int $id
+     * @return bool
+     */
+    public function reCountFirm(int $id): bool;
 
     /**
      * @param StorageInterface $hStorage

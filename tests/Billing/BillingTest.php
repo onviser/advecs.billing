@@ -232,7 +232,7 @@ class BillingTest extends TestCase
      * @return bool
      * @throws BillingException
      */
-    public function testReCountRuble(): bool
+    public function testReCount(): bool
     {
         $hBilling = $this->getBilling();
         $hBilling->addUserRuble(self::ID_USER_1, 400, 'пополнение u1-1');
@@ -242,19 +242,14 @@ class BillingTest extends TestCase
         $hBilling->addUserRuble(self::ID_USER_2, 20, 'пополнение бонусов u1-2');
         $hBilling->addUserRuble(self::ID_USER_2, 30, 'пополнение бонусов u1-2');
         $hBilling->transferUserRuble(self::ID_USER_1, self::ID_USER_2, 140, 'тестовый перевод');
-        $this->assertEquals(1760, $hBilling->reCountUserRuble(self::ID_USER_1));
-        $this->assertEquals(200, $hBilling->reCountUserRuble(self::ID_USER_2));
-        return true;
-    }
+        $this->assertEquals(true, $hBilling->reCountUser(self::ID_USER_1));
+        $this->assertEquals(true, $hBilling->reCountUser(self::ID_USER_2));
 
-    /** @return bool */
-    public function testReCountBonus(): bool
-    {
-        $hBilling = $this->getBilling();
         $hBilling->addUserBonus(self::ID_USER_1, 400, 'пополнение u1-1');
         $hBilling->addUserBonus(self::ID_USER_1, 600, 'пополнение u1-2');
         $hBilling->addUserBonus(self::ID_USER_1, 900, 'пополнение u1-3');
-        $this->assertEquals(1900, $hBilling->reCountUserBonus(self::ID_USER_1));
+        $this->assertEquals(true, $hBilling->reCountUser(self::ID_USER_1));
+
         return true;
     }
 

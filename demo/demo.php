@@ -20,16 +20,20 @@ try {
         ));
 
     $user1 = 1;
-    $hBilling->addUserRuble($user1, 3.14, 'пополнение счета');
-    $hBilling->addUserBonus($user1, 2.15, 'пополнение бонусного счета');
+    $hBilling->addUserRuble($user1, 1.11, 'пополнение счета');
+    $hBilling->addUserBonus($user1, 3.33, 'пополнение бонусного счета');
     echo "баланс пользователя в рублях [{$user1}]: " . $hBilling->getUserBalanceRuble($user1) . PHP_EOL;
     echo "баланс пользователя в бонусах [{$user1}]: " . $hBilling->getUserBalanceBonus($user1) . PHP_EOL;
 
     $user2 = 2;
-    $hBilling->addUserRuble($user2, 2.28, 'пополнение счета');
-    $hBilling->addUserBonus($user2, 1.15, 'пополнение бонусного счета');
+    $hBilling->addUserRuble($user2, 2.22, 'пополнение счета');
+    $hBilling->addUserBonus($user2, 4.44, 'пополнение бонусного счета');
     echo "баланс пользователя в рублях [{$user2}]: " . $hBilling->getUserBalanceRuble($user2) . PHP_EOL;
     echo "баланс пользователя в бонусах [{$user2}]: " . $hBilling->getUserBalanceBonus($user2) . PHP_EOL;
+
+    // пересчет баланса
+    $hBilling->reCountUser($user1);
+    $hBilling->reCountUser($user2);
 
 } catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;

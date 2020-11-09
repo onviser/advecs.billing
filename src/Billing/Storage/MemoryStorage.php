@@ -53,10 +53,9 @@ class MemoryStorage implements StorageInterface
      */
     public function addBonus(Posting $hPostingCredit): bool
     {
-        /** @var User $hUser */
-        $hUser = $hPostingCredit->getTo();
-        $hUser->changeBalanceBonus($hPostingCredit->getAmount());
-        $this->postingBonus[$hUser->getType()][$hUser->getId()][] = $hPostingCredit;
+        $hAccount = $hPostingCredit->getTo();
+        $hAccount->changeBalanceBonus($hPostingCredit->getAmount());
+        $this->postingBonus[$hAccount->getType()][$hAccount->getId()][] = $hPostingCredit;
         return true;
     }
 
@@ -143,32 +142,44 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
-     * @param Account $hAccount
-     * @return float
+     * @param Search $hSearch
+     * @return Posting[]
      */
-    public function reCountRuble(Account $hAccount): float
+    public function getPostingBonus(Search $hSearch): array
     {
-        /** @var Posting $hPosting */
-        $amount = 0;
-        foreach ($this->postingRuble[$hAccount->getType()][$hAccount->getId()] as $hPosting) {
-            $amount += $hPosting->getAmount();
-        }
-        $hAccount->setBalance($amount);
-        return $amount;
+        return [];
     }
 
     /**
      * @param Account $hAccount
-     * @return float
+     * @return bool
      */
-    public function reCountBonus(Account $hAccount): float
+    public function reCount(Account $hAccount): bool
     {
-        /** @var Posting $hPosting */
-        $amount = 0;
-        foreach ($this->postingBonus[$hAccount->getType()][$hAccount->getId()] as $hPosting) {
-            $amount += $hPosting->getAmount();
+        $balance = 0;
+        if (isset($this->postingRuble[$hAccount->getType()])) {
+            if (isset($this->postingRuble[$hAccount->getType()][$hAccount->getId()])) {
+                $postings = $this->postingRuble[$hAccount->getType()][$hAccount->getId()];
+                foreach ($postings as $hPosting) {
+                    /** @var Posting $hPosting */
+                    $balance += $hPosting->getAmount();
+                }
+            }
         }
-        $hAccount->setBalance($amount);
-        return $amount;
+        $hAccount->setBalance($balance);
+
+        $balanceBonus = 0;
+        if (isset($this->postingBonus[$hAccount->getType()])) {
+            if (isset($this->postingBonus[$hAccount->getType()][$hAccount->getId()])) {
+                $postings = $this->postingBonus[$hAccount->getType()][$hAccount->getId()];
+                foreach ($postings as $hPosting) {
+                    /** @var Posting $hPosting */
+                    $balanceBonus += $hPosting->getAmount();
+                }
+            }
+        }
+        $hAccount->setBalanceBonus($balanceBonus);
+
+        return true;
     }
 }
