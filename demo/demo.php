@@ -57,8 +57,12 @@ try {
 
     // получение проводок
     $hSearch = (new Search())
-        ->setLimit(0, 10);
-    $hBilling->getPosting($hSearch);
+        ->setAccount($hBilling->getAccountUser($user1)->getId())
+        ->setAmount(0.5, 1)
+        ->setTime(1604932640)
+        ->setComment('2 -> 1')
+        ->setLimit(0, 20);
+    $postings = $hBilling->getPosting($hSearch);
 
     echo "баланс пользователя в рублях [{$user1}]: " . $hBilling->getUserBalanceRuble($user1) . PHP_EOL;
     echo "баланс пользователя в бонусах [{$user1}]: " . $hBilling->getUserBalanceBonus($user1) . PHP_EOL;

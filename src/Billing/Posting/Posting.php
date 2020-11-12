@@ -29,12 +29,16 @@ class Posting
      * Posting constructor.
      * @param float $amount
      * @param string $comment
+     * @param float|int $time
      */
-    public function __construct(float $amount, string $comment = '')
+    public function __construct(float $amount, string $comment = '', float $time = 0)
     {
         $this->amount = $amount;
         $this->comment = $comment;
-        $this->time = microtime(true);
+        if ($time === 0) {
+            $time = microtime(true);
+        }
+        $this->time = $time;
     }
 
     /**

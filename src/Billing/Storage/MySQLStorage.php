@@ -165,7 +165,8 @@ class MySQLStorage implements StorageInterface
 
     /**
      * @param Search $hSearch
-     * @return Posting[]
+     * @return array
+     * @throws MySQLException
      */
     public function getPosting(Search $hSearch): array
     {
@@ -198,9 +199,18 @@ class MySQLStorage implements StorageInterface
         }
         $sql .= 'ORDER BY id DESC ';
         $sql .= 'LIMIT ' . $hSearch->getOffset() . ', ' . $hSearch->getLimit();
-        echo $sql . PHP_EOL;
-
-        return [];
+        $rows = $this->getRows($sql);
+        if (!$rows) {
+            return [];
+        }
+        $posting = [];
+        foreach ($rows as $row) {
+            $amount = floatval($row['posting_amount']);
+            $comment = $row['posting_comment'];
+            $time = floatval($row['posting_add']);
+            $posting[] = (new Posting($amount, $comment, $time));
+        }
+        return $posting;
     }
 
     public function getPostingBonus(Search $hSearch): array
