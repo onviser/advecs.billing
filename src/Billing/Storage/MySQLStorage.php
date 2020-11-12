@@ -20,7 +20,7 @@ class MySQLStorage implements StorageInterface
     protected $port = 3306;
 
     /** @var mysqli */
-    protected $connection;
+    protected $mysqli;
 
     /**
      * MySQLStorage constructor.
@@ -163,8 +163,43 @@ class MySQLStorage implements StorageInterface
         return true;
     }
 
+    /**
+     * @param Search $hSearch
+     * @return Posting[]
+     */
     public function getPosting(Search $hSearch): array
     {
+        $where = [];
+        if ($hSearch->getAccount() != 0) {
+            $where[] = 'id_account = "' . intval($hSearch->getAccount()) . '"';
+        }
+        if ($hSearch->getAmountFrom() > 0) {
+            $where[] = 'ABS(posting_amount) >= "' . floatval($hSearch->getAmountFrom()) . '"';
+        }
+        if ($hSearch->getAmountTo() > 0) {
+            $where[] = 'ABS(posting_amount) <= "' . floatval($hSearch->getAmountTo()) . '"';
+        }
+        if ($hSearch->getTimeFrom() > 0) {
+            $where[] = 'posting_add >= "' . intval($hSearch->getTimeFrom()) . '"';
+        }
+        if ($hSearch->getTimeTo() > 0) {
+            $where[] = 'posting_add <= "' . intval($hSearch->getTimeTo()) . '"';
+        }
+        if ($hSearch->getComment() !== '') {
+            $where[] = 'posting_comment LIKE "%' . strval($hSearch->getComment()) . '%"';
+        }
+
+        $tableName = 'billing_posting';
+        $sql = 'SELECT ';
+        $sql .= '* ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        if (count($where)) {
+            $sql .= 'WHERE ' . implode(' AND ', $where);
+        }
+        $sql .= 'ORDER BY id DESC ';
+        $sql .= 'LIMIT ' . $hSearch->getOffset() . ', ' . $hSearch->getLimit();
+        echo $sql . PHP_EOL;
+
         return [];
     }
 
@@ -325,7 +360,7 @@ class MySQLStorage implements StorageInterface
     {
         $result = $this->getQueryResult($sql);
         if ($result) {
-            return intval(mysqli_insert_id($this->connection));
+            return intval(mysqli_insert_id($this->mysqli));
         }
         return 0;
     }
@@ -339,8 +374,8 @@ class MySQLStorage implements StorageInterface
     {
         $result = $this->getQueryResult($sql);
         if ($result) {
-            $errorNumber = mysqli_errno($this->connection);
-            $affectedRows = mysqli_affected_rows($this->connection);
+            $errorNumber = mysqli_errno($this->mysqli);
+            $affectedRows = mysqli_affected_rows($this->mysqli);
             if ($affectedRows > 0) {
                 return true;
             } elseif ($affectedRows == 0 && $errorNumber == 0) {
@@ -372,16 +407,16 @@ class MySQLStorage implements StorageInterface
     protected function getQueryResult(string $sql)
     {
         $result = null;
-        if (!$this->connection) {
+        if (!$this->mysqli) {
             $this->connect();
         }
-        $result = mysqli_query($this->connection, $sql);
-        $error = mysqli_error($this->connection);
+        $result = mysqli_query($this->mysqli, $sql);
+        $error = mysqli_error($this->mysqli);
         if ($error != '') {
             throw (new MySQLException('ошибка при выполнении запроса'))
                 ->setSQL($sql)
                 ->setError($error)
-                ->setErrorNumber(mysqli_errno($this->connection));
+                ->setErrorNumber(mysqli_errno($this->mysqli));
         }
         return $result;
     }
@@ -392,14 +427,14 @@ class MySQLStorage implements StorageInterface
      */
     protected function connect(): bool
     {
-        $this->connection = mysqli_connect(
+        $this->mysqli = new mysqli(
             $this->host,
             $this->user,
             $this->password,
             $this->database,
             $this->port
         );
-        if (!$this->connection) {
+        if (!$this->mysqli) {
             throw (new MySQLException('ошибка соединения с базой'))
                 ->setError(mysqli_connect_error())
                 ->setErrorNumber(mysqli_connect_errno());
@@ -410,8 +445,8 @@ class MySQLStorage implements StorageInterface
 
     public function __destruct()
     {
-        if ($this->connection) {
-            mysqli_close($this->connection);
+        if ($this->mysqli) {
+            mysqli_close($this->mysqli);
         }
     }
 }

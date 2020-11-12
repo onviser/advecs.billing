@@ -12,13 +12,13 @@ class Search
     protected $accountType = 0;
 
     protected $offset = 0;
-    protected $limit = 0;
+    protected $limit = 100;
 
     protected $timeFrom = 0;
     protected $timeTo = 0;
 
-    protected $amountFrom = 0;
-    protected $amountTo = 0;
+    protected $amountFrom = 0.0;
+    protected $amountTo = 0.0;
 
     protected $comment = '';
 
@@ -114,25 +114,25 @@ class Search
     }
 
     /**
-     * @param int $amountFrom
-     * @param int $amountTo
+     * @param float $amountFrom
+     * @param float $amountTo
      * @return $this
      */
-    public function setAmount(int $amountFrom = 0, int $amountTo = 0): self
+    public function setAmount(float $amountFrom = 0.0, float $amountTo = 0.0): self
     {
         $this->amountFrom = $amountFrom;
         $this->amountTo = $amountTo;
         return $this;
     }
 
-    /** @return int */
-    public function getAmountFrom(): int
+    /** @return float */
+    public function getAmountFrom(): float
     {
         return $this->amountFrom;
     }
 
-    /** @return int */
-    public function getAmountTo(): int
+    /** @return float */
+    public function getAmountTo(): float
     {
         return $this->amountTo;
     }
@@ -143,6 +143,10 @@ class Search
      */
     public function setComment(string $comment = ''): self
     {
+        $comment = strip_tags($comment);
+        $comment = str_replace('"', '', $comment);
+        $comment = str_replace("'", '', $comment);
+        $comment = str_replace('`', '', $comment);
         $this->comment = $comment;
         return $this;
     }

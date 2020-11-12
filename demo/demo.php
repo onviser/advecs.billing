@@ -5,6 +5,7 @@ require_once '../vendor/autoload.php';
 use Advecs\Billing\Billing;
 use Advecs\Billing\Exception\BillingException;
 use Advecs\Billing\Exception\MySQLException;
+use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\MySQLStorage;
 
 $config = require_once 'config.php';
@@ -34,17 +35,17 @@ try {
     //$hBilling->addFirmRuble($firm2, 700, 'пополнение счета фирмы');
 
     // перевод со счета на счет (пользователи)
-    $hBilling->transferUserRuble($user1, $user2, 0.10, 'перевод средств со счета на счет, ' . $user1 . ' -> ' . $user2);
-    $hBilling->transferUserRuble($user2, $user1, 0.50, 'перевод средств со счета на счет, ' . $user2 . ' -> ' . $user1);
+    //$hBilling->transferUserRuble($user1, $user2, 0.10, 'перевод средств со счета на счет, ' . $user1 . ' -> ' . $user2);
+    //$hBilling->transferUserRuble($user2, $user1, 0.50, 'перевод средств со счета на счет, ' . $user2 . ' -> ' . $user1);
 
     // перевод со счета на счет (фирмы)
-    $hBilling->transferFirmRuble($firm1, $firm2, 100, 'перевод средств со счета на счет, ' . $firm1 . ' -> ' . $firm2);
-    $hBilling->transferFirmRuble($firm2, $firm1, 150, 'перевод средств со счета на счет, ' . $firm2 . ' -> ' . $firm1);
+    //$hBilling->transferFirmRuble($firm1, $firm2, 100, 'перевод средств со счета на счет, ' . $firm1 . ' -> ' . $firm2);
+    //$hBilling->transferFirmRuble($firm2, $firm1, 150, 'перевод средств со счета на счет, ' . $firm2 . ' -> ' . $firm1);
 
-    $hBilling->transferUserFirmRuble($user1, $firm1, 0.75, 'перевод средств от пользователя к фирме, ' . $user1 . ' -> ' . $firm1);
-    $hBilling->transferUserFirmRuble($user1, $firm1, 0.25, 'перевод средств от пользователя к фирме, ' . $user1 . ' -> ' . $firm1);
-    $hBilling->transferFirmUserRuble($firm1, $user1, 70, 'перевод средств от фирмы к пользователю, ' . $firm1 . ' -> ' . $user1);
-    $hBilling->transferFirmUserRuble($firm1, $user1, 10, 'перевод средств от фирмы к пользователю, ' . $firm1 . ' -> ' . $user1);
+    //$hBilling->transferUserFirmRuble($user1, $firm1, 0.75, 'перевод средств от пользователя к фирме, ' . $user1 . ' -> ' . $firm1);
+    //$hBilling->transferUserFirmRuble($user1, $firm1, 0.25, 'перевод средств от пользователя к фирме, ' . $user1 . ' -> ' . $firm1);
+    //$hBilling->transferFirmUserRuble($firm1, $user1, 70, 'перевод средств от фирмы к пользователю, ' . $firm1 . ' -> ' . $user1);
+    //$hBilling->transferFirmUserRuble($firm1, $user1, 10, 'перевод средств от фирмы к пользователю, ' . $firm1 . ' -> ' . $user1);
 
     // пересчет баланса (пользователи)
     $hBilling->reCountUser($user1);
@@ -53,6 +54,11 @@ try {
     // пересчет баланса (фирмы)
     $hBilling->reCountFirm($firm1);
     $hBilling->reCountFirm($firm2);
+
+    // получение проводок
+    $hSearch = (new Search())
+        ->setLimit(0, 10);
+    $hBilling->getPosting($hSearch);
 
     echo "баланс пользователя в рублях [{$user1}]: " . $hBilling->getUserBalanceRuble($user1) . PHP_EOL;
     echo "баланс пользователя в бонусах [{$user1}]: " . $hBilling->getUserBalanceBonus($user1) . PHP_EOL;

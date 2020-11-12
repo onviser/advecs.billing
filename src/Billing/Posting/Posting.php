@@ -101,6 +101,7 @@ class Posting
         return $this;
     }
 
+    /** @return float */
     public function getTime(): float
     {
         return $this->time;
