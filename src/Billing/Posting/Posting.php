@@ -50,7 +50,7 @@ class Posting
     {
         $this->amount = $amount;
         $this->comment = $comment;
-        if ($time === 0) {
+        if ($time == 0) {
             $time = microtime(true);
         }
         $this->time = $time;
