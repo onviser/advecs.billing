@@ -2,6 +2,7 @@
 
 namespace Advecs\Billing;
 
+use Advecs\Billing\Account\Account;
 use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\StorageInterface;
@@ -12,6 +13,20 @@ use Advecs\Billing\Storage\StorageInterface;
  */
 interface BillingInterface
 {
+    /**
+     * Аккаунт пользователя в биллинге
+     * @return Account|null
+     * @var int $id
+     */
+    public function getAccountUser(int $id): ?Account;
+
+    /**
+     * Аккаунт фирмы в биллинге
+     * @return Account|null
+     * @var int $id
+     */
+    public function getAccountFirm(int $id): ?Account;
+
     /**
      * Баланс пользователя в рублях
      * @param int $id

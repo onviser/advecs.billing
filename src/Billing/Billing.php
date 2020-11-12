@@ -3,7 +3,6 @@
 namespace Advecs\Billing;
 
 use Advecs\Billing\Account\Account;
-use Advecs\Billing\Account\User;
 use Advecs\Billing\Exception\NotEnoughException;
 use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\Search\Search;
@@ -19,14 +18,34 @@ class Billing implements BillingInterface
     protected $hStorage;
 
     /**
+     * Аккаунт пользователя в биллинге
+     * @return Account|null
+     * @var int $id
+     */
+    public function getAccountUser(int $id): ?Account
+    {
+        return $this->hStorage->getAccount($id, Account::TYPE_USER);
+    }
+
+    /**
+     * Аккаунт фирмы в биллинге
+     * @return Account|null
+     * @var int $id
+     */
+    public function getAccountFirm(int $id): ?Account
+    {
+        return $this->hStorage->getAccount($id, Account::TYPE_FIRM);
+    }
+
+    /**
      * Баланс пользователя в рублях
      * @param int $id
      * @return float
      */
     public function getUserBalanceRuble(int $id): float
     {
-        $hUser = $this->hStorage->getAccount($id, Account::TYPE_USER);
-        return $hUser->getBalance();
+        $hUser = $this->getAccountUser($id);
+        return $hUser ? $hUser->getBalance() : 0.0;
     }
 
     /**
@@ -36,9 +55,8 @@ class Billing implements BillingInterface
      */
     public function getUserBalanceBonus(int $id): float
     {
-        /** @var User $hUser */
-        $hUser = $this->hStorage->getAccount($id, Account::TYPE_USER);
-        return $hUser->getBalanceBonus();
+        $hUser = $this->getAccountUser($id);
+        return $hUser ? $hUser->getBalanceBonus() : 0.0;
     }
 
     /**
@@ -50,7 +68,7 @@ class Billing implements BillingInterface
      */
     public function addUserRuble(int $id, float $amount, string $comment = 'пополнение счета'): bool
     {
-        $hUser = $this->hStorage->getAccount($id, Account::TYPE_USER);
+        $hUser = $this->getAccountUser($id);
         $hPosting = (new Posting($amount, $comment))
             ->setTo($hUser);
         return $this->hStorage->addRuble($hPosting);
@@ -65,8 +83,7 @@ class Billing implements BillingInterface
      */
     public function addUserBonus(int $id, float $amount, string $comment = 'зачисление бонусов'): bool
     {
-        /** @var User $hUser */
-        $hUser = $this->hStorage->getAccount($id, Account::TYPE_USER);
+        $hUser = $this->getAccountUser($id);
         $hPosting = (new Posting($amount, $comment))
             ->setTo($hUser);
         return $this->hStorage->addBonus($hPosting);
@@ -82,8 +99,8 @@ class Billing implements BillingInterface
      */
     public function transferUserRuble(int $from, int $to, float $amount, string $comment): bool
     {
-        $hFrom = $this->hStorage->getAccount($from, Account::TYPE_USER);
-        $hTo = $this->hStorage->getAccount($to, Account::TYPE_USER);
+        $hFrom = $this->getAccountUser($from);
+        $hTo = $this->getAccountUser($to);
         $hPosting = (new Posting($amount, $comment))
             ->setFrom($hFrom)
             ->setTo($hTo);
@@ -105,8 +122,8 @@ class Billing implements BillingInterface
      */
     public function getFirmBalanceRuble(int $id): float
     {
-        $hFirm = $this->hStorage->getAccount($id, Account::TYPE_FIRM);
-        return $hFirm->getBalance();
+        $hFirm = $this->getAccountFirm($id);
+        return $hFirm ? $hFirm->getBalance() : 0.0;
     }
 
     /**
@@ -118,7 +135,7 @@ class Billing implements BillingInterface
      */
     public function addFirmRuble(int $id, float $amount, string $comment = 'пополнение счета фирмы'): bool
     {
-        $hFirm = $this->hStorage->getAccount($id, Account::TYPE_FIRM);
+        $hFirm = $this->getAccountFirm($id);
         $hPosting = (new Posting($amount, $comment))
             ->setTo($hFirm);
         return $this->hStorage->addRuble($hPosting);
@@ -135,8 +152,8 @@ class Billing implements BillingInterface
      */
     public function transferFirmRuble(int $from, int $to, float $amount, string $comment): bool
     {
-        $hFrom = $this->hStorage->getAccount($from, Account::TYPE_FIRM);
-        $hTo = $this->hStorage->getAccount($to, Account::TYPE_FIRM);
+        $hFrom = $this->getAccountFirm($from);
+        $hTo = $this->getAccountFirm($to);
         $hPosting = (new Posting($amount, $comment))
             ->setFrom($hFrom)
             ->setTo($hTo);
@@ -162,8 +179,8 @@ class Billing implements BillingInterface
      */
     public function transferUserFirmRuble(int $user, int $firm, float $amount, string $comment): bool
     {
-        $hFrom = $this->hStorage->getAccount($user, Account::TYPE_USER);
-        $hTo = $this->hStorage->getAccount($firm, Account::TYPE_FIRM);
+        $hFrom = $this->getAccountUser($user);
+        $hTo = $this->getAccountFirm($firm);
         $hPosting = (new Posting($amount, $comment))
             ->setFrom($hFrom)
             ->setTo($hTo);
@@ -189,8 +206,8 @@ class Billing implements BillingInterface
      */
     public function transferFirmUserRuble(int $firm, int $user, float $amount, string $comment): bool
     {
-        $hFrom = $this->hStorage->getAccount($firm, Account::TYPE_FIRM);
-        $hTo = $this->hStorage->getAccount($user, Account::TYPE_USER);
+        $hFrom = $this->getAccountFirm($firm);
+        $hTo = $this->getAccountUser($user);
         $hPosting = (new Posting($amount, $comment))
             ->setFrom($hFrom)
             ->setTo($hTo);
@@ -232,8 +249,7 @@ class Billing implements BillingInterface
      */
     public function reCountUser(int $id): bool
     {
-        /** @var User $hAccount */
-        $hAccount = $this->hStorage->getAccount($id, Account::TYPE_USER);
+        $hAccount = $this->getAccountUser($id);
         $this->hStorage->reCount($hAccount);
         return true;
     }
@@ -245,7 +261,7 @@ class Billing implements BillingInterface
      */
     public function reCountFirm(int $id): bool
     {
-        $hAccount = $this->hStorage->getAccount($id, Account::TYPE_FIRM);
+        $hAccount = $this->getAccountFirm($id);
         $this->hStorage->reCount($hAccount);
         return true;
     }
