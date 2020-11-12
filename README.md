@@ -1,7 +1,7 @@
 # Биллинг
 ## 1. установка
 php composer.phar require jurych/billing  
-(версия PHP 7.2)
+(версия PHP 7.1)
 
 ## 2. использование
 
