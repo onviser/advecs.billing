@@ -60,8 +60,19 @@ try {
         ->setAccount($hBilling->getAccountUser($user1)->getId())
         ->setAmount(0.5, 1)
         ->setComment('2 -> 1')
-        ->setLimit(0, 20);
+        ->setLimit(0, 10);
     $postings = $hBilling->getPosting($hSearch);
+    foreach ($postings as $hPosting) {
+        echo " - проводка {$hPosting->getId()}: {$hPosting->getAmount()} руб., {$hPosting->getComment()}" . PHP_EOL;
+    }
+
+    // получение бонусных проводок
+    $hSearch = (new Search())
+        ->setLimit(0, 10);
+    $postings = $hBilling->getPostingBonus($hSearch);
+    foreach ($postings as $hPosting) {
+        echo " - проводка {$hPosting->getId()}: {$hPosting->getAmount()} бон., {$hPosting->getComment()}" . PHP_EOL;
+    }
 
     echo "баланс пользователя в рублях [{$user1}]: " . $hBilling->getUserBalanceRuble($user1) . PHP_EOL;
     echo "баланс пользователя в бонусах [{$user1}]: " . $hBilling->getUserBalanceBonus($user1) . PHP_EOL;

@@ -2,11 +2,13 @@
 
 namespace Advecs\Billing\Exception;
 
+use Exception;
+
 /**
  * Class StorageException
  * @package Advecs\Billing\Exception
  */
-class MySQLException extends \Exception
+class MySQLException extends Exception
 {
     /** @var int */
     protected $errorNumber = 0;

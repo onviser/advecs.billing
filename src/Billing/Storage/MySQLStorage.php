@@ -165,10 +165,33 @@ class MySQLStorage implements StorageInterface
 
     /**
      * @param Search $hSearch
-     * @return array
+     * @return Posting[]
      * @throws MySQLException
      */
     public function getPosting(Search $hSearch): array
+    {
+        $tableName = 'billing_posting';
+        return $this->getPostingCommon($hSearch, $tableName);
+    }
+
+    /**
+     * @param Search $hSearch
+     * @return Posting[]
+     * @throws MySQLException
+     */
+    public function getPostingBonus(Search $hSearch): array
+    {
+        $tableName = 'billing_posting_bonus';
+        return $this->getPostingCommon($hSearch, $tableName);
+    }
+
+    /**
+     * @param Search $hSearch
+     * @param string $tableName
+     * @return Posting[]
+     * @throws MySQLException
+     */
+    protected function getPostingCommon(Search $hSearch, string $tableName): array
     {
         $where = [];
         if ($hSearch->getAccount() != 0) {
@@ -190,7 +213,6 @@ class MySQLStorage implements StorageInterface
             $where[] = 'posting_comment LIKE "%' . strval($hSearch->getComment()) . '%"';
         }
 
-        $tableName = 'billing_posting';
         $sql = 'SELECT ';
         $sql .= '* ';
         $sql .= 'FROM ' . $tableName . ' ';
@@ -206,17 +228,17 @@ class MySQLStorage implements StorageInterface
         $accountId = [];
         $posting = [];
         foreach ($rows as $row) {
-            $id = intval($row['id']);
             $idAccount = intval($row['id_account']);
             $idAccountFrom = intval($row['id_from']);
             $idAccountTo = intval($row['id_to']);
-            $amount = floatval($row['posting_amount']);
-            $comment = $row['posting_comment'];
-            $time = floatval($row['posting_add']);
-
             $accountId[$idAccount] = $idAccount;
             $accountId[$idAccountFrom] = $idAccountFrom;
             $accountId[$idAccountTo] = $idAccountTo;
+
+            $amount = floatval($row['posting_amount']);
+            $comment = $row['posting_comment'];
+            $time = floatval($row['posting_add']);
+            $id = intval($row['id']);
             $posting[] = (new Posting($amount, $comment, $time))
                 ->setId($id)
                 ->setIdAccount($idAccount, $idAccountFrom, $idAccountTo);
@@ -232,8 +254,8 @@ class MySQLStorage implements StorageInterface
             $sql .= 'account_balance, ';
             $sql .= 'account_balance_bonus, ';
             $sql .= 'id_account ';
-            $sql.= 'FROM ' . $tableName . ' ';
-            $sql.= 'WHERE id_account IN (' . implode(', ', array_keys($accountId)) . ') ';
+            $sql .= 'FROM ' . $tableName . ' ';
+            $sql .= 'WHERE id_account IN (' . implode(', ', array_keys($accountId)) . ') ';
             $rows = $this->getRows($sql);
             if ($rows) {
                 foreach ($rows as $row) {
@@ -261,11 +283,6 @@ class MySQLStorage implements StorageInterface
         }
 
         return $posting;
-    }
-
-    public function getPostingBonus(Search $hSearch): array
-    {
-        return [];
     }
 
     /**
@@ -487,7 +504,7 @@ class MySQLStorage implements StorageInterface
      */
     protected function connect(): bool
     {
-        $this->mysqli = new mysqli(
+        $this->mysqli = mysqli_connect(
             $this->host,
             $this->user,
             $this->password,
