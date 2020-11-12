@@ -14,6 +14,9 @@ abstract class Account
     /** @var int */
     protected $id = 0;
 
+    /** @var int */
+    protected $idExternal = 0;
+
     /** @var float */
     protected $balance = 0.0;
 
@@ -89,6 +92,22 @@ abstract class Account
     {
         $this->balanceBonus += $amount;
         return $this->balanceBonus;
+    }
+
+    /**
+     * @param int $idExternal
+     * @return $this
+     */
+    public function setIdExternal(int $idExternal): self
+    {
+        $this->idExternal = $idExternal;
+        return $this;
+    }
+
+    /** @return int */
+    public function getIdExternal(): int
+    {
+        return $this->idExternal;
     }
 
     /** @return int */

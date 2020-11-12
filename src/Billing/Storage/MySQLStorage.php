@@ -203,13 +203,63 @@ class MySQLStorage implements StorageInterface
         if (!$rows) {
             return [];
         }
+        $accountId = [];
         $posting = [];
         foreach ($rows as $row) {
+            $id = intval($row['id']);
+            $idAccount = intval($row['id_account']);
+            $idAccountFrom = intval($row['id_from']);
+            $idAccountTo = intval($row['id_to']);
             $amount = floatval($row['posting_amount']);
             $comment = $row['posting_comment'];
             $time = floatval($row['posting_add']);
-            $posting[] = (new Posting($amount, $comment, $time));
+
+            $accountId[$idAccount] = $idAccount;
+            $accountId[$idAccountFrom] = $idAccountFrom;
+            $accountId[$idAccountTo] = $idAccountTo;
+            $posting[] = (new Posting($amount, $comment, $time))
+                ->setId($id)
+                ->setIdAccount($idAccount, $idAccountFrom, $idAccountTo);
         }
+
+        /** @var Account[] */
+        $account = [];
+        $tableName = 'billing_account';
+        if (count($accountId) > 0) {
+            $sql = 'SELECT ';
+            $sql .= 'id_type, ';
+            $sql .= 'id_external, ';
+            $sql .= 'account_balance, ';
+            $sql .= 'account_balance_bonus, ';
+            $sql .= 'id_account ';
+            $sql.= 'FROM ' . $tableName . ' ';
+            $sql.= 'WHERE id_account IN (' . implode(', ', array_keys($accountId)) . ') ';
+            $rows = $this->getRows($sql);
+            if ($rows) {
+                foreach ($rows as $row) {
+                    $id = intval($row['id_account']);
+                    $type = intval($row['id_type']);
+                    $balance = floatval($row['account_balance']);
+                    $balanceBonus = floatval($row['account_balance_bonus']);
+                    $account[$id] = ($type === Account::TYPE_FIRM) ? new Firm($id, $balance, $balanceBonus) : new User($id, $balance, $balanceBonus);
+                }
+            }
+        }
+
+        foreach ($posting as $hPosting) {
+            if ($hPosting instanceof Posting) {
+                if (isset($account[$hPosting->getIdAccount()])) {
+                    $hPosting->setAccount($account[$hPosting->getIdAccount()]);
+                }
+                if (isset($account[$hPosting->getIdAccountFrom()])) {
+                    $hPosting->setFrom($account[$hPosting->getIdAccountFrom()]);
+                }
+                if (isset($account[$hPosting->getIdAccountTo()])) {
+                    $hPosting->setTo($account[$hPosting->getIdAccountTo()]);
+                }
+            }
+        }
+
         return $posting;
     }
 

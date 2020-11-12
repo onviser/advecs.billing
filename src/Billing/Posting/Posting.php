@@ -10,6 +10,18 @@ use Advecs\Billing\Account\Account;
  */
 class Posting
 {
+    /** @var int */
+    protected $id = 0;
+
+    /** @var int */
+    protected $idAccount = 0;
+
+    /** @var int */
+    protected $idAccountFrom = 0;
+
+    /** @var int */
+    protected $idAccountTo = 0;
+
     /** @var float */
     protected $amount = 0.0;
 
@@ -18,6 +30,9 @@ class Posting
 
     /** @var string */
     protected $comment = '';
+
+    /** @var ?Account */
+    protected $hAccount;
 
     /** @var ?Account */
     protected $hFrom;
@@ -39,6 +54,70 @@ class Posting
             $time = microtime(true);
         }
         $this->time = $time;
+    }
+
+    /**
+     * @param int $id
+     * @return $this
+     */
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /** @return int */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $idAccount
+     * @param int $idAccountFrom
+     * @param int $idAccountTo
+     * @return $this
+     */
+    public function setIdAccount(int $idAccount, int $idAccountFrom = 0, int $idAccountTo = 0): self
+    {
+        $this->idAccount = $idAccount;
+        $this->idAccountFrom = $idAccountFrom;
+        $this->idAccountTo = $idAccountTo;
+        return $this;
+    }
+
+    /** @return int */
+    public function getIdAccount(): int
+    {
+        return $this->idAccount;
+    }
+
+    /** @return int */
+    public function getIdAccountFrom(): int
+    {
+        return $this->idAccountFrom;
+    }
+
+    /** @return int */
+    public function getIdAccountTo(): int
+    {
+        return $this->idAccountTo;
+    }
+
+    /**
+     * @param Account|null $hAccount
+     * @return $this
+     */
+    public function setAccount(?Account $hAccount): self
+    {
+        $this->hAccount = $hAccount;
+        return $this;
+    }
+
+    /** @return Account|null */
+    public function getAccount(): ?Account
+    {
+        return $this->hAccount;
     }
 
     /**
