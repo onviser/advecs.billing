@@ -1,6 +1,7 @@
 .idea
 .DS_Store
 .phpunit.result.cache
+/app/config/.env
 /demo/config.php
 /vendor/*
 composer.phar
