@@ -4,6 +4,7 @@ namespace Advecs\App\Controller\Error;
 
 use Advecs\App\Exception\NotFoundException;
 use Advecs\Billing\Exception\BillingException;
+use Advecs\Billing\Exception\MySQLException;
 use Throwable;
 
 class FactoryErrorController
@@ -18,6 +19,9 @@ class FactoryErrorController
             case  NotFoundException::class;
                 return NotFoundErrorController::class;
             case BillingException::class:
+                break;
+            case MySQLException::class:
+                return MySQLErrorController::class;
                 break;
         }
         return InternalErrorController::class;

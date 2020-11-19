@@ -3,6 +3,7 @@
 namespace Advecs\App\Controller\Error;
 
 use Advecs\App\HTTP\Response;
+use Throwable;
 
 class InternalErrorController extends ErrorController
 {
@@ -14,6 +15,15 @@ class InternalErrorController extends ErrorController
             ->addHeader('Status', '503 Service Temporarily Unavailable')
             ->addHeader('Retry-After', '600')
             ->addHeader('Cache-Control', 'no-cache')
-            ->setData('Ошибка приложения');
+            ->setData($this->getMessage($this->hException));
+    }
+
+    /**
+     * @param Throwable $hException
+     * @return string
+     */
+    protected function getMessage(Throwable $hException)
+    {
+        return 'Ошибка приложения ' . $hException->getMessage() === '' ? '' : ': ' . $hException->getMessage();
     }
 }
