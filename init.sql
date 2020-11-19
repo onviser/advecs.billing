@@ -6,9 +6,9 @@ CREATE DATABASE billing DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 DROP TABLE IF EXISTS billing_account;
 CREATE TABLE billing_account
 (
-    id_account                    INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_account            INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_type               TINYINT UNSIGNED DEFAULT 0 COMMENT 'тип аккаунта: 1 - пользователь, 2 - фирма',
-    id_external            INTEGER UNSIGNED DEFAULT 0 COMMENT 'внешний id пользователя, id фирмы',
+    id_external           INTEGER UNSIGNED DEFAULT 0 COMMENT 'внешний id пользователя, id фирмы',
     account_balance       DECIMAL(10, 2)   DEFAULT 0 COMMENT 'баланс',
     account_balance_bonus DECIMAL(10, 2)   DEFAULT 0 COMMENT 'баланс в бонусах',
     account_add           INTEGER UNSIGNED DEFAULT 0,
@@ -59,3 +59,24 @@ ALTER TABLE billing_posting_bonus
     ADD INDEX (id_account);
 ALTER TABLE billing_posting_bonus
     ADD INDEX (posting_day);
+
+
+DROP TABLE IF EXISTS billing_pscb_payment;
+CREATE TABLE billing_pscb_payment
+(
+    id_payment      INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_account      INTEGER UNSIGNED DEFAULT 0,
+    payment_amount  DECIMAL(10, 2)   DEFAULT 0,
+    payment_comment CHAR(250)        DEFAULT '',
+    payment_type    CHAR(20)         DEFAULT '',
+    payment_status  TINYINT UNSIGNED DEFAULT 0,
+    payment_add     INTEGER UNSIGNED DEFAULT 0,
+    payment_json    TEXT
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT 'ПСКБ, платежи';
+ALTER TABLE billing_pscb_payment
+    ADD INDEX (id_account);
+ALTER TABLE billing_pscb_payment
+    ADD INDEX (payment_status);
+ALTER TABLE billing_pscb_payment
+    ADD INDEX (payment_add);

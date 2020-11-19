@@ -4,6 +4,7 @@ namespace Advecs\App\Controller\PSCB;
 
 use Advecs\App\Controller\Controller;
 use Advecs\App\HTTP\Response;
+use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Template\Page\PSCB\DemoPSCBPageTemplate;
 
 class DemoPSCBController extends Controller
@@ -13,7 +14,14 @@ class DemoPSCBController extends Controller
     {
         // обработка платежа
         if ($this->hRequest->isExists('payment')) {
+            $account = 1;
+            $amount = 1.1;
+            $comment = 'тестовый платеж для аккаунта ' . $account;
 
+            $hPSCBPayment = (new PSCBPayment($account, $amount))
+                ->setType(PSCBPayment::TYPE_CARD)
+                ->setStatus(PSCBPayment::STATUS_NEW)
+                ->setComment($comment);
         }
 
         $hTemplatePage = new DemoPSCBPageTemplate();
