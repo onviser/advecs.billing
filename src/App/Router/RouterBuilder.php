@@ -3,6 +3,7 @@
 namespace Advecs\App\Router;
 
 use Advecs\App\Controller\DefaultController;
+use Advecs\App\Controller\PSCB\DemoPSCBController;
 use Advecs\App\Controller\PSCB\PaymentPSCBController;
 
 /**
@@ -20,6 +21,7 @@ class RouterBuilder
         $hRouter = new Router($URI);
         $hRouter->add('/', new Path(DefaultController::class));
         $hRouter->add('/pscb.html', new Path(PaymentPSCBController::class));
+        $hRouter->add('/demo.html', new Path(DemoPSCBController::class));
         return $hRouter;
     }
 }
