@@ -3,14 +3,19 @@
 namespace Advecs\App\Controller\Error;
 
 use Advecs\App\Controller\Controller;
-use Advecs\App\HTTP\Response;
+use Throwable;
 
-class ErrorController extends Controller
+abstract class ErrorController extends Controller
 {
-    /** @return Response */
-    public function getResponse(): Response
+    /** @var Throwable */
+    protected $hException;
+
+    /**
+     * ErrorController constructor.
+     * @param Throwable $hException
+     */
+    public function __construct(Throwable $hException)
     {
-        return parent::getResponse()
-            ->setData('ошибка');
+        $this->hException = $hException;
     }
 }

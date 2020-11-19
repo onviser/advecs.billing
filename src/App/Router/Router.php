@@ -2,6 +2,8 @@
 
 namespace Advecs\App\Router;
 
+use Advecs\App\Exception\NotFoundException;
+
 /**
  * Class Router
  * @package Advecs\App\Router
@@ -34,8 +36,11 @@ class Router
         return $this;
     }
 
-    /** @return Path|null */
-    public function getPath(): ?Path
+    /**
+     * @return Path
+     * @throws NotFoundException
+     */
+    public function getPath(): Path
     {
         foreach ($this->rule as $rule => $hPath) {
             $pattern = '/^' . $rule . '$/';
@@ -43,7 +48,7 @@ class Router
                 return $hPath;
             }
         }
-        return null;
+        throw new NotFoundException();
     }
 
     /**
