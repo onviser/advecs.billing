@@ -39,7 +39,8 @@ abstract class PageTemplate implements TemplateInterface
     /** @return string */
     protected function getFooter(): string
     {
-        $html = '<footer>';
+        $html = '<br /><br /><br /><br /><br />';
+        $html .= '<footer>';
         $html .= '&copy; ' . date('Y') . ' &laquo;Адвекс&raquo;';
         $html .= '</footer>';
         return $html;

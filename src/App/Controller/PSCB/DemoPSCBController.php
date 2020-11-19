@@ -11,6 +11,11 @@ class DemoPSCBController extends Controller
     /** @return Response */
     public function getResponse(): Response
     {
+        // обработка платежа
+        if ($this->hRequest->isExists('payment')) {
+
+        }
+
         $hTemplatePage = new DemoPSCBPageTemplate();
         return parent::getResponse()->setData(
             $this->getPageTemplate($hTemplatePage)->getData());
