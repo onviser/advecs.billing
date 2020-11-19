@@ -1,23 +1,29 @@
 <?php declare(strict_types=1);
-
 require_once '../vendor/autoload.php';
 
+use Advecs\App\Config\Config;
 use Advecs\Billing\Billing;
 use Advecs\Billing\Exception\BillingException;
 use Advecs\Billing\Exception\MySQLException;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\MySQLStorage;
 
-$config = require_once 'config.php';
+$dir = '..' . DIRECTORY_SEPARATOR;
+$dir .= 'app' . DIRECTORY_SEPARATOR;
+$dir .= 'config' . DIRECTORY_SEPARATOR;
+$hConfig = new Config(
+    Config::getEnvFromFile($dir . '.env'),
+    Config::getParamFromFile($dir . 'config.php')
+);
 
 try {
     $hBilling = (new Billing())
         ->setStorage(new MySQLStorage(
-            $config['mysql']['host'],
-            $config['mysql']['user'],
-            $config['mysql']['password'],
-            $config['mysql']['database'],
-            $config['mysql']['port']
+            $hConfig->get('db-billing.host'),
+            $hConfig->get('db-billing.user'),
+            $hConfig->get('db-billing.pass'),
+            $hConfig->get('db-billing.name'),
+            intval($hConfig->get('db-billing.port'))
         ));
 
     $user1 = 1;
@@ -81,7 +87,8 @@ try {
     echo "баланс фирмы в рублях [{$firm1}]: " . $hBilling->getFirmBalanceRuble($firm1) . PHP_EOL;
     echo "баланс фирмы в рублях [{$firm2}]: " . $hBilling->getFirmBalanceRuble($firm2) . PHP_EOL;
 
-} catch (MySQLException $hException) {
+}
+catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
     if ($hException->getError() !== '') {
         echo ' - сообщение: ' . $hException->getError() . PHP_EOL;
@@ -92,10 +99,13 @@ try {
     if ($hException->getSQL() !== '') {
         echo ' - запрос: ' . $hException->getSQL() . PHP_EOL;
     }
-} catch (BillingException|Exception $hException) {
+}
+catch (BillingException|Exception $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
-} catch (Error $hError) {
+}
+catch (Error $hError) {
     echo 'ошибка: ' . $hError->getMessage() . PHP_EOL;
-} finally {
+}
+finally {
     unset($hBilling);
 }
