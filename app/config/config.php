@@ -6,7 +6,7 @@ return [
         'port'         => '%DB_BILLING_PORT%',
         'user'         => '%DB_BILLING_USER%',
         'pass'         => '%DB_BILLING_PASS%',
-        'name'         => 'billing',
+        'name'         => '%DB_BILLING_NAME%',
         'table-prefix' => 'billing_',
     ],
     'pscb'       => [
