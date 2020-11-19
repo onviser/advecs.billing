@@ -4,7 +4,9 @@ namespace Advecs\App\Router;
 
 use Advecs\App\Controller\DefaultController;
 use Advecs\App\Controller\PSCB\DemoPSCBController;
+use Advecs\App\Controller\PSCB\FailPSCBController;
 use Advecs\App\Controller\PSCB\PaymentPSCBController;
+use Advecs\App\Controller\PSCB\SuccessPSCBController;
 
 /**
  * Class RouterBuilder
@@ -20,8 +22,10 @@ class RouterBuilder
     {
         $hRouter = new Router($URI);
         $hRouter->add('/', new Path(DefaultController::class));
-        $hRouter->add('/pscb.html', new Path(PaymentPSCBController::class));
-        $hRouter->add('/demo.html', new Path(DemoPSCBController::class));
+        $hRouter->add('/pscb/', new Path(PaymentPSCBController::class));
+        $hRouter->add('/pscb/success.html', new Path(SuccessPSCBController::class));
+        $hRouter->add('/pscb/fail.html', new Path(FailPSCBController::class));
+        $hRouter->add('/pscb/demo.html', new Path(DemoPSCBController::class));
         return $hRouter;
     }
 }

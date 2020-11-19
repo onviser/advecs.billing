@@ -10,7 +10,7 @@ cd bin
 php demo.php  
 
 ### 2.2 запуск через веб:
-https://billing.advecs.org/demo.html  
+https://billing.advecs.org/pscb/demo.html  
 
 ## 3. запуск тестов 
 ./vendor/bin/phpunit  

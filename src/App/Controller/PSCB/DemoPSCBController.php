@@ -8,6 +8,7 @@ use Advecs\App\Observer\Dispatcher;
 use Advecs\App\Observer\Event\PSCB\PSCBPaymentEvent;
 use Advecs\Billing\BillingInterface;
 use Advecs\Billing\PSCB\PSCBPayment;
+use Advecs\Template\Page\PSCB\DemoPaymentPSCBPageTemplate;
 use Advecs\Template\Page\PSCB\DemoPSCBPageTemplate;
 
 /**
@@ -51,6 +52,33 @@ class DemoPSCBController extends Controller
 
             $this->hDispatcher->dispatch(PSCBPaymentEvent::EVENT_ADD, new PSCBPaymentEvent($hPSCBPayment));
             $this->hDispatcher->dispatch(PSCBPaymentEvent::EVENT_RECEIVE, new PSCBPaymentEvent($hPSCBPayment));
+
+            $url = $this->hConfig->get('app.protocol') . '://';
+            $url .= $this->hConfig->get('app.domain');
+
+            $urlPSCB = $this->hConfig->get('pscb.url') . 'pay/';
+            $marketPlace = $this->hConfig->get('pscb.marketPlace');
+            $secretKey = $this->hConfig->get('pscb.secretKey');
+            $message = [
+                'amount'          => $amount,
+                'orderId'         => $hPSCBPayment->getId(),
+                'details'         => $comment,
+                //'paymentMethod'   => 'ac',
+                'customerAccount' => $account,
+                'successUrl'      => $url . '/pscb/success.html',
+                'failUrl'         => $url . '/pscb/fail.html',
+                'nonce'           => md5(rand(1, 1000000) . time() . $hPSCBPayment->getId())
+            ];
+            $messageText = json_encode($message);
+
+            $hTemplatePage = new DemoPaymentPSCBPageTemplate(
+                $urlPSCB,
+                $marketPlace,
+                base64_encode($messageText),
+                hash('sha256', $messageText . $secretKey)
+            );
+            return parent::getResponse()->setData(
+                $this->getPageTemplate($hTemplatePage)->getData());
         }
 
         $hTemplatePage = new DemoPSCBPageTemplate();

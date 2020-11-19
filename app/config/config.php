@@ -15,6 +15,8 @@ return [
         'secretKey'   => '6ad7b354d3baf27949f0c5abb147d5214e68cc08469849fb3d8715dcae28d97e',
     ],
     'app'        => [
-        'debug' => '%APP_DEBUG%',
+        'domain'   => '%APP_DOMAIN%',
+        'protocol' => '%APP_PROTOCOL%',
+        'debug'    => '%APP_DEBUG%',
     ]
 ];
