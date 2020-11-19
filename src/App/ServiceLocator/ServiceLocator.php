@@ -18,6 +18,12 @@ class ServiceLocator
     /** @var array */
     protected $closure = [];
 
+    /** @var Config */
+    protected $hConfig;
+
+    /** @var Debug */
+    protected $hDebug;
+
     /**
      * @param $class
      * @param Closure $hClosure
@@ -32,13 +38,19 @@ class ServiceLocator
     /** @return Config */
     public function getConfig(): Config
     {
-        return $this->closure[Config::class]();
+        if (!$this->hConfig) {
+            $this->hConfig = $this->closure[Config::class]();
+        }
+        return $this->hConfig;
     }
 
     /** @return Debug */
     public function getDebug(): Debug
     {
-        return $this->closure[Debug::class]();
+        if (!$this->hDebug) {
+            $this->hDebug = $this->closure[Debug::class]();
+        }
+        return $this->hDebug;
     }
 
     /**

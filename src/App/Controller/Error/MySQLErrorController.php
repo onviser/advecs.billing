@@ -13,10 +13,14 @@ class MySQLErrorController extends InternalErrorController
      */
     protected function getMessage(Throwable $hException)
     {
-        /** @var MySQLException $hException */
-        $message = 'Ошибка базы данных: ' . $hException->getError() . PHP_EOL;
-        $message .= 'Код ошибки: ' . $hException->getErrorNumber() . PHP_EOL;
-        $message .= 'SQL: ' . $hException->getSQL() . PHP_EOL;
-        return $message;
+        if ($this->hDebug->isUse()) {
+            /** @var MySQLException $hException */
+            $message = 'Ошибка базы данных: ' . $hException->getError() . PHP_EOL;
+            $message .= 'Код ошибки: ' . $hException->getErrorNumber() . PHP_EOL;
+            $message .= 'SQL: ' . $hException->getSQL() . PHP_EOL;
+            return $message;
+        }
+
+        return 'Ошибка базы данных';
     }
 }

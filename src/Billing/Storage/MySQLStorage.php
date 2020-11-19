@@ -410,13 +410,13 @@ class MySQLStorage implements StorageInterface
     {
         $tableName = 'billing_pscb_payment';
         $insert = [
-            'id_account'      => '%d',
-            'payment_amount'  => '%f',
-            'payment_comment' => '%s',
-            'payment_type'    => '%s',
-            'payment_status'  => '%d',
-            'payment_add'     => '%d',
-            'payment_json'    => '%s',
+            'id_account'      => '"%d"',
+            'payment_amount'  => '"%f"',
+            'payment_comment' => '"%s"',
+            'payment_type'    => '"%s"',
+            'payment_status'  => '"%d"',
+            'payment_add'     => '"%d"',
+            'payment_json'    => '"%s"',
         ];
         $sql = 'INSERT INTO ' . $tableName . ' (' . implode(', ', array_keys($insert)) . ') ';
         $sql .= 'VALUES (' . implode(', ', $insert) . ')';

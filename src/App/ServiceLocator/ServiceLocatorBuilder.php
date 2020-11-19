@@ -4,6 +4,8 @@ namespace Advecs\App\ServiceLocator;
 
 use Advecs\App\Config\Config;
 use Advecs\App\Debug\Debug;
+use Advecs\App\Observer\Dispatcher;
+use Advecs\App\Observer\Subscriber\PSCBSubscriber;
 use Advecs\Billing\Billing;
 use Advecs\Billing\BillingInterface;
 use Advecs\Billing\Storage\MySQLStorage;
@@ -47,6 +49,11 @@ class ServiceLocatorBuilder
                     $hSL->getConfig()->get('db-billing.name'),
                     intval($hSL->getConfig()->get('db-billing.port'))
                 ));
+        });
+
+        $hSL->add(Dispatcher::class, function () use ($hSL) {
+            return (new Dispatcher())
+                ->addSubscriber(new PSCBSubscriber($hSL->getDebug()));
         });
 
         return $hSL;
