@@ -119,4 +119,10 @@ class PSCBPayment
     {
         return $this->type;
     }
+
+    /** @return string */
+    public function getJSON(): string
+    {
+        return '';
+    }
 }

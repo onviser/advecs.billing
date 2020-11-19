@@ -6,8 +6,13 @@ use Advecs\Billing\Account\Account;
 use Advecs\Billing\Account\Firm;
 use Advecs\Billing\Account\User;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 
+/**
+ * Class MemoryStorage
+ * @package Advecs\Billing\Storage
+ */
 class MemoryStorage implements StorageInterface
 {
     /** @var Account[][] */
@@ -18,6 +23,9 @@ class MemoryStorage implements StorageInterface
 
     /** @var Posting[] */
     protected $postingBonus = [];
+
+    /** @var PSCBPayment[] */
+    protected $payment = [];
 
     /**
      * @param int $id
@@ -148,6 +156,16 @@ class MemoryStorage implements StorageInterface
     public function getPostingBonus(Search $hSearch): array
     {
         return [];
+    }
+
+    /**
+     * @param PSCBPayment $hPSCBPayment
+     * @return bool
+     */
+    public function addPSCBPayment(PSCBPayment $hPSCBPayment): bool
+    {
+        $this->payment[] = $hPSCBPayment;
+        return true;
     }
 
     /**
