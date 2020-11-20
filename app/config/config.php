@@ -12,7 +12,7 @@ return [
     'pscb'       => [
         'url'         => 'https://oosdemo.pscb.ru/',
         'marketPlace' => '159846510',
-        'secretKey'   => '6ad7b354d3baf27949f0c5abb147d5214e68cc08469849fb3d8715dcae28d97e',
+        'secretKey'   => '111111', //%PSCB_KEY%
     ],
     'app'        => [
         'domain'   => '%APP_DOMAIN%',

@@ -18,7 +18,6 @@ class DemoPSCBPageTemplate extends PageTemplate
         $html .= '<p>';
         $html .= 'номер счета: 1<br />';
         $html .= 'сумма платежа: 1 руб.<br />';
-        $html .= 'тип оплаты: банковская карта (ac)<br />';
         $html .= '</p>';
 
         $html .= '<form id="payment-form" name="payment-form" method="post" action="/pscb/demo.html">';

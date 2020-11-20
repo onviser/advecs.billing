@@ -37,10 +37,12 @@ class DemoPSCBController extends Controller
     /** @return Response */
     public function getResponse(): Response
     {
-
-
         // обработка платежа
         if ($this->hRequest->isExists('payment')) {
+
+            //$this->hDispatcher->dispatch(PSCBPaymentEvent::EVENT_ADD, new PSCBPaymentEvent($hPSCBPayment));
+            //$this->hDispatcher->dispatch(PSCBPaymentEvent::EVENT_RECEIVE, new PSCBPaymentEvent($hPSCBPayment));
+
             $account = 1;
             $amount = 1.1;
             $comment = 'тестовый платеж для аккаунта ' . $account;
@@ -50,26 +52,27 @@ class DemoPSCBController extends Controller
                 ->setComment($comment);
             $this->hBilling->addPSCBPayment($hPSCBPayment);
 
-            $this->hDispatcher->dispatch(PSCBPaymentEvent::EVENT_ADD, new PSCBPaymentEvent($hPSCBPayment));
-            $this->hDispatcher->dispatch(PSCBPaymentEvent::EVENT_RECEIVE, new PSCBPaymentEvent($hPSCBPayment));
-
             $url = $this->hConfig->get('app.protocol') . '://';
             $url .= $this->hConfig->get('app.domain');
 
             $urlPSCB = $this->hConfig->get('pscb.url') . 'pay/';
             $marketPlace = $this->hConfig->get('pscb.marketPlace');
             $secretKey = $this->hConfig->get('pscb.secretKey');
+            echo "secretKey: $secretKey" . '<br />';
+
             $message = [
-                'amount'          => $amount,
-                'orderId'         => $hPSCBPayment->getId(),
-                'details'         => $comment,
-                //'paymentMethod'   => 'ac',
-                'customerAccount' => $account,
-                'successUrl'      => $url . '/pscb/success.html',
-                'failUrl'         => $url . '/pscb/fail.html',
-                'nonce'           => md5(rand(1, 1000000) . time() . $hPSCBPayment->getId())
+                "amount"          => 1,
+                "orderId"         => 2,
+                "details"         => 'test payment',
+                "customerAccount" => 3,
+                //"successUrl"      => $url . '/pscb/success.html',
+                //"failUrl"         => $url . '/pscb/fail.html',
+                'data'            => [
+                    'debug' => true
+                ]
             ];
             $messageText = json_encode($message);
+            echo $messageText;
 
             $hTemplatePage = new DemoPaymentPSCBPageTemplate(
                 $urlPSCB,
