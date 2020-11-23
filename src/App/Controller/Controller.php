@@ -6,6 +6,7 @@ use Advecs\App\Config\Config;
 use Advecs\App\Debug\Debug;
 use Advecs\App\HTTP\Request;
 use Advecs\App\HTTP\Response;
+use Advecs\Template\Page\PageTemplate;
 
 /**
  * Class Controller
@@ -21,6 +22,15 @@ abstract class Controller
 
     /** @var Debug */
     protected $hDebug;
+
+    /**
+     * @param PageTemplate $hTemplate
+     * @return PageTemplate
+     */
+    protected function getPageTemplate(PageTemplate $hTemplate): PageTemplate
+    {
+        return $hTemplate;
+    }
 
     /**
      * @param Request $hRequest

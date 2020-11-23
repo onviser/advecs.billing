@@ -2,9 +2,10 @@
 
 namespace Advecs\App\Application;
 
-use Advecs\App\Controller\Error\ErrorController;
+use Advecs\App\Controller\Error\FactoryErrorController;
+use Advecs\App\Debug\Debug;
 use Advecs\App\HTTP\Request;
-use Advecs\App\Router\Path;
+use Advecs\App\HTTP\Response;
 use Advecs\App\Router\RouterBuilder;
 use Advecs\App\ServiceLocator\ServiceLocatorBuilder;
 use Advecs\Template\HTML\DebugTemplate;
@@ -23,26 +24,44 @@ class Application
     {
         $hSL = ServiceLocatorBuilder::build();
         $hDebug = $hSL->getDebug()->add('start');
-
         $URI = $hRequest->get('REQUEST_URI', '/');
-        $hPath = RouterBuilder::build($URI)->getPath() ?? new Path(ErrorController::class);
-        $hResponse = $hSL->getController($hPath->getClass())
-            ->setRequest($hRequest)
-            ->getResponse();
 
+        try {
+            $hPath = RouterBuilder::build($URI)->getPath();
+            $hResponse = $hSL->getController($hPath->getClass())
+                ->setRequest($hRequest)
+                ->getResponse();
+        }
+        catch (\Throwable $hException) {
+            $hResponse =
+                $hSL->getController(FactoryErrorController::getControllerClass($hException), [$hException])
+                    ->setRequest($hRequest)
+                    ->getResponse();
+        }
+        echo $this->output($hResponse, $hDebug);
+        return true;
+    }
+
+    /**
+     * @param Response $hResponse
+     * @param Debug $hDebug
+     * @return string
+     */
+    protected function output(Response $hResponse, Debug $hDebug): string
+    {
         // вывод данных
         foreach ($hResponse->getHeaderAll() as $name => $value) {
             header($name . ($value === '' ? '' : ': ' . $value));
         }
-        echo $hResponse->getData();
+        $output = $hResponse->getData();
 
         // вывод отладочной информации
         if ($hDebug->isUse()) {
             $hDebug->add('количество файлов: ' . count(get_included_files()));
             $hDebug->add('stop');
-            echo (new DebugTemplate($hDebug))->getData();
+            $output .= (new DebugTemplate($hDebug))->getData();
         }
 
-        return true;
+        return $output;
     }
 }

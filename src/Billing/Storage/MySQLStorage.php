@@ -7,10 +7,15 @@ use Advecs\Billing\Account\Firm;
 use Advecs\Billing\Account\User;
 use Advecs\Billing\Exception\MySQLException;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use mysqli;
 use mysqli_result;
 
+/**
+ * Class MySQLStorage
+ * @package Advecs\Billing\Storage
+ */
 class MySQLStorage implements StorageInterface
 {
     protected $host = '';
@@ -62,7 +67,8 @@ class MySQLStorage implements StorageInterface
             $account = intval($row['id_account']);
             $balance = floatval($row['account_balance']);
             $balance_bonus = floatval($row['account_balance_bonus']);
-        } else {
+        }
+        else {
             $time = time();
             $sql = 'INSERT INTO ' . $tableName . ' (id_type, id_external, account_add, account_update) ';
             $sql .= 'VALUES ("%d", "%d", "%d", "%d")';
@@ -94,7 +100,8 @@ class MySQLStorage implements StorageInterface
             $this->saveBalance($hAccount);
             $this->query('COMMIT');
             $this->query('SET AUTOCOMMIT = 1');
-        } catch (MySQLException $hException) {
+        }
+        catch (MySQLException $hException) {
             $this->query('ROLLBACK');
             $this->query('SET AUTOCOMMIT = 1');
             throw $hException;
@@ -118,7 +125,8 @@ class MySQLStorage implements StorageInterface
             $this->saveBalance($hAccount);
             $this->query('COMMIT');
             $this->query('SET AUTOCOMMIT = 1');
-        } catch (MySQLException $hException) {
+        }
+        catch (MySQLException $hException) {
             $this->query('ROLLBACK');
             $this->query('SET AUTOCOMMIT = 1');
             throw $hException;
@@ -155,7 +163,8 @@ class MySQLStorage implements StorageInterface
             $this->query('COMMIT');
             $this->query('SET AUTOCOMMIT = 1');
 
-        } catch (MySQLException $hException) {
+        }
+        catch (MySQLException $hException) {
             $this->query('ROLLBACK');
             $this->query('SET AUTOCOMMIT = 1');
             throw $hException;
@@ -392,6 +401,38 @@ class MySQLStorage implements StorageInterface
         return $this->update($sql);
     }
 
+    /**
+     * @param PSCBPayment $hPSCBPayment
+     * @return bool
+     * @throws MySQLException
+     */
+    public function addPSCBPayment(PSCBPayment $hPSCBPayment): bool
+    {
+        $tableName = 'billing_pscb_payment';
+        $insert = [
+            'id_account'      => '"%d"',
+            'payment_amount'  => '"%f"',
+            'payment_comment' => '"%s"',
+            'payment_type'    => '"%s"',
+            'payment_status'  => '"%d"',
+            'payment_add'     => '"%d"',
+            'payment_json'    => '"%s"',
+        ];
+        $sql = 'INSERT INTO ' . $tableName . ' (' . implode(', ', array_keys($insert)) . ') ';
+        $sql .= 'VALUES (' . implode(', ', $insert) . ')';
+        $sql = sprintf($sql,
+            $hPSCBPayment->getAccount(),
+            $hPSCBPayment->getAmount(),
+            $hPSCBPayment->getComment(),
+            $hPSCBPayment->getType(),
+            $hPSCBPayment->getStatus(),
+            time(),
+            $hPSCBPayment->getJSON()
+        );
+        $hPSCBPayment->setId($this->insert($sql));
+        return $hPSCBPayment->getId() > 0;
+    }
+
     // ---------- функции для работы с базой ----------
 
     /**
@@ -455,7 +496,8 @@ class MySQLStorage implements StorageInterface
             $affectedRows = mysqli_affected_rows($this->mysqli);
             if ($affectedRows > 0) {
                 return true;
-            } elseif ($affectedRows == 0 && $errorNumber == 0) {
+            }
+            elseif ($affectedRows == 0 && $errorNumber == 0) {
                 return true;
             }
         }

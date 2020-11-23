@@ -13,6 +13,10 @@
             "Tests\\": "tests/"
         }
     },
+    "require": {
+        "ext-mysqli": "*",
+      "ext-json": "*"
+    },
     "require-dev": {
         "phpunit/phpunit": "^7.5"
     }

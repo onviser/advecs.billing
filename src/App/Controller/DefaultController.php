@@ -3,6 +3,7 @@
 namespace Advecs\App\Controller;
 
 use Advecs\App\HTTP\Response;
+use Advecs\Template\Page\DefaultPageTemplate;
 
 /**
  * Class DefaultController
@@ -13,7 +14,8 @@ class DefaultController extends Controller
     /** @return Response */
     public function getResponse(): Response
     {
-        return parent::getResponse()
-            ->setData('default');
+        $hTemplatePage = new DefaultPageTemplate();
+        return parent::getResponse()->setData(
+            $this->getPageTemplate($hTemplatePage)->getData());
     }
 }

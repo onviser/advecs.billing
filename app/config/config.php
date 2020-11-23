@@ -6,10 +6,17 @@ return [
         'port'         => '%DB_BILLING_PORT%',
         'user'         => '%DB_BILLING_USER%',
         'pass'         => '%DB_BILLING_PASS%',
-        'name'         => 'billing',
-        'table-prefix' => 'billing_'
+        'name'         => '%DB_BILLING_NAME%',
+        'table-prefix' => 'billing_',
+    ],
+    'pscb'       => [
+        'url'         => 'https://oosdemo.pscb.ru/',
+        'marketPlace' => '159846510',
+        'secretKey'   => '111111', //%PSCB_KEY%
     ],
     'app'        => [
-        'debug' => '%APP_DEBUG%',
+        'domain'   => '%APP_DOMAIN%',
+        'protocol' => '%APP_PROTOCOL%',
+        'debug'    => '%APP_DEBUG%',
     ]
 ];

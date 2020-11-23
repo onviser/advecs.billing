@@ -4,6 +4,7 @@ namespace Advecs\Billing;
 
 use Advecs\Billing\Account\Account;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\StorageInterface;
 
@@ -143,6 +144,12 @@ interface BillingInterface
      * @return bool
      */
     public function reCountFirm(int $id): bool;
+
+    /**
+     * @param PSCBPayment $hPayment
+     * @return bool
+     */
+    public function addPSCBPayment(PSCBPayment $hPayment): bool;
 
     /**
      * @param StorageInterface $hStorage

@@ -4,7 +4,7 @@ namespace Advecs\App\ServiceLocator;
 
 use Advecs\App\Config\Config;
 use Advecs\App\Controller\Controller;
-use Advecs\App\Controller\Error\ErrorController;
+use Advecs\App\Controller\Error\InternalErrorController;
 use Advecs\App\Debug\Debug;
 use Closure;
 use ReflectionClass;
@@ -17,6 +17,12 @@ class ServiceLocator
 {
     /** @var array */
     protected $closure = [];
+
+    /** @var Config */
+    protected $hConfig;
+
+    /** @var Debug */
+    protected $hDebug;
 
     /**
      * @param $class
@@ -32,13 +38,19 @@ class ServiceLocator
     /** @return Config */
     public function getConfig(): Config
     {
-        return $this->closure[Config::class]();
+        if (!$this->hConfig) {
+            $this->hConfig = $this->closure[Config::class]();
+        }
+        return $this->hConfig;
     }
 
     /** @return Debug */
     public function getDebug(): Debug
     {
-        return $this->closure[Debug::class]();
+        if (!$this->hDebug) {
+            $this->hDebug = $this->closure[Debug::class]();
+        }
+        return $this->hDebug;
     }
 
     /**
@@ -54,13 +66,15 @@ class ServiceLocator
             $hR = new ReflectionClass($class);
             if (!$hR->getConstructor() || (count($hR->getConstructor()->getParameters()) == 0)) {
                 $hController = $hR->newInstance();
-            } else {
+            }
+            else {
                 $hController = $hR->newInstanceArgs(
                     $this->getControllerParam($hR->getConstructor()->getParameters(), $param)
                 );
             }
-        } catch (\Throwable $hThrowable) {
-            $hController = new ErrorController();
+        }
+        catch (\Throwable $hThrowable) {
+            $hController = new InternalErrorController($hThrowable);
         }
 
         return $hController
@@ -82,17 +96,22 @@ class ServiceLocator
                     $hInstance = $this->getInstance($hParam->getClass()->getName());
                     if ($hInstance) {
                         $result[] = $hInstance;
-                    } elseif (array_key_exists($hParam->getPosition(), $param)) {
+                    }
+                    elseif (array_key_exists($hParam->getPosition(), $param)) {
                         $result[] = $param[$hParam->getPosition()];
-                    } else {
+                    }
+                    else {
                         $result[] = null;
                     }
-                } else {
+                }
+                else {
                     if (array_key_exists($hParam->getName(), $param)) {
                         $result[] = $param[$hParam->getName()];
-                    } elseif (array_key_exists($hParam->getPosition(), $param)) {
+                    }
+                    elseif (array_key_exists($hParam->getPosition(), $param)) {
                         $result[] = $param[$hParam->getPosition()];
-                    } else {
+                    }
+                    else {
                         $result[] = null;
                     }
                 }
