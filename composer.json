@@ -14,6 +14,12 @@
             "Tests\\": "tests/"
         }
     },
+    "repositories": {
+        "advecs": {
+            "type": "git",
+            "url": "https://github.com/jurych/advecs.billing"
+        }
+    },
     "require-dev": {
         "phpunit/phpunit": "^7.5"
     }
