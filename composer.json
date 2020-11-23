@@ -5,17 +5,14 @@
     "keywords": ["advecs"],
     "require": {
         "php": ">=7.1.0",
-        "ext-mysqli": "*"
+        "ext-mysqli": "*",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {
             "Advecs\\": "src/",
             "Tests\\": "tests/"
         }
-    },
-    "require": {
-        "ext-mysqli": "*",
-      "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.5"
