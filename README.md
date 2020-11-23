@@ -1,7 +1,12 @@
 # Биллинг
 
 ## 1. установка
-версия PHP: 7.1 (такая версия используется в консоли TimeWeb)  
+Для работы нужна версия PHP: 7.1 (такая версия используется в консоли TimeWeb)
+
+### 1.1 подключение репозитория
+В папке проекта нужно выполнить эти команды:  
+composer config repositories.advecs vcs https://github.com/jurych/advecs.billing  
+composer require jurych/advecs.billing  
 
 ## 2. использование
 
@@ -10,12 +15,16 @@ cd bin
 php demo.php  
 
 ### 2.2 запуск через веб:
-https://billing.advecs.org/pscb/demo.html  
+https://billing.advecs.org/pscb/demo.html
+
+### 2.3 подключение в коде:
+```php
+$hBilling = (new Billing())
+        ->setStorage(new MySQLStorage($host, $user, $pass, $database, $port));
+```
+
+### 2.4 пример использования:
+https://github.com/jurych/advecs.billing/blob/master/bin/demo.php  
 
 ## 3. запуск тестов 
 ./vendor/bin/phpunit  
-
-### Composer
-php composer.phar require --dev phpunit/phpunit  
-chmod 0775 vendor/bin/phpunit  
-chmod 0775 vendor/phpunit/phpunit/phpunit    
