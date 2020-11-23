@@ -8,6 +8,10 @@
 composer config repositories.advecs vcs https://github.com/jurych/advecs.billing  
 composer require jurych/advecs.billing  
 
+### 1.2 создание базы (локально, для разработки)
+Необходимо выполнить в MySQL следующий скрипт:  
+https://github.com/jurych/advecs.billing/blob/master/init.sql
+
 ## 2. использование
 
 ### 2.1 запуск из консоли:
