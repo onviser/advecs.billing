@@ -1,12 +1,11 @@
 # Биллинг
 
 ## 1. установка
-Для работы нужна версия PHP: 7.1 (такая версия используется в консоли TimeWeb)
+Для работы нужна версия PHP: 7.0 (по просьбе Кости)
 
 ### 1.1 подключение репозитория
 В папке проекта нужно выполнить эти команды:  
-composer config repositories.advecs vcs https://github.com/jurych/advecs.billing  
-composer require jurych/advecs.billing:dev-master  
+composer require onviser/advecs.billing  
 
 ### 1.2 создание базы (локально, для разработки)
 Необходимо выполнить в MySQL следующий скрипт:  
