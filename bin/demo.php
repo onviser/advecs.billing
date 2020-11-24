@@ -100,7 +100,10 @@ catch (MySQLException $hException) {
         echo ' - запрос: ' . $hException->getSQL() . PHP_EOL;
     }
 }
-catch (BillingException|Exception $hException) {
+catch (BillingException $hException) {
+    echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
+}
+catch (Exception $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
 }
 catch (Error $hError) {

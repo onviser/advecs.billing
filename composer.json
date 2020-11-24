@@ -1,12 +1,12 @@
 {
     "name": "onviser/advecs.billing",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "type": "library",
     "description": "ADVECS billing package",
     "keywords": ["advecs"],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=7.1.0",
+        "php": ">=7.0.0",
         "ext-mysqli": "*",
         "ext-json": "*"
     },
@@ -23,6 +23,6 @@
         }
     ],
     "require-dev": {
-        "phpunit/phpunit": "^7.5"
+        "phpunit/phpunit": "^6.5"
     }
 }

@@ -28,8 +28,8 @@ class BillingException extends Exception
         return $this;
     }
 
-    /** @return Account|null */
-    public function getAccount(): ?Account
+    /** @return Account */
+    public function getAccount()
     {
         return $this->account;
     }
@@ -44,8 +44,8 @@ class BillingException extends Exception
         return $this;
     }
 
-    /** @return Posting|null */
-    public function getPosting(): ?Posting
+    /** @return Posting */
+    public function getPosting()
     {
         return $this->posting;
     }

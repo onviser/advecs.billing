@@ -20,20 +20,20 @@ class Billing implements BillingInterface
 
     /**
      * Аккаунт пользователя в биллинге
-     * @return Account|null
+     * @return Account
      * @var int $id
      */
-    public function getAccountUser(int $id): ?Account
+    public function getAccountUser(int $id)
     {
         return $this->hStorage->getAccount($id, Account::TYPE_USER);
     }
 
     /**
      * Аккаунт фирмы в биллинге
-     * @return Account|null
+     * @return Account
      * @var int $id
      */
-    public function getAccountFirm(int $id): ?Account
+    public function getAccountFirm(int $id)
     {
         return $this->hStorage->getAccount($id, Account::TYPE_FIRM);
     }
