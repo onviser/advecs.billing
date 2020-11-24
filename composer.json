@@ -1,8 +1,8 @@
 {
-    "name": "jurych/advecs.billing",
-    "version": "1.0.1",
+    "name": "onviser/advecs.billing",
+    "version": "1.0.2",
     "type": "library",
-    "description": "Billing package",
+    "description": "ADVECS billing package",
     "keywords": ["advecs"],
     "minimum-stability": "dev",
     "require": {
@@ -19,7 +19,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/jurych/advecs.billing"
+            "url": "https://github.com/onviser/advecs.billing"
         }
     ],
     "require-dev": {

@@ -10,7 +10,7 @@ composer require jurych/advecs.billing:dev-master
 
 ### 1.2 создание базы (локально, для разработки)
 Необходимо выполнить в MySQL следующий скрипт:  
-https://github.com/jurych/advecs.billing/blob/master/init.sql
+https://github.com/onviser/advecs.billing/blob/master/init.sql
 
 ## 2. использование
 
@@ -28,7 +28,7 @@ $hBilling = (new Billing())
 ```
 
 ### 2.4 пример использования:
-https://github.com/jurych/advecs.billing/blob/master/bin/demo.php  
+https://github.com/onviser/advecs.billing/blob/master/bin/demo.php  
 
 ## 3. запуск тестов 
 ./vendor/bin/phpunit  
