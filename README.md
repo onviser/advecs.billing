@@ -17,16 +17,13 @@ https://github.com/onviser/advecs.billing/blob/master/init.sql
 cd bin  
 php demo.php  
 
-### 2.2 запуск через веб:
-https://billing.advecs.org/pscb/demo.html
-
-### 2.3 подключение в коде:
+### 2.2 подключение в коде:
 ```php
 $hBilling = (new Billing())
         ->setStorage(new MySQLStorage($host, $user, $pass, $database, $port));
 ```
 
-### 2.4 пример использования:
+### 2.3 пример использования:
 https://github.com/onviser/advecs.billing/blob/master/bin/demo.php  
 
 ## 3. запуск тестов 

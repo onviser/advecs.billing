@@ -1,6 +1,5 @@
 {
     "name": "onviser/advecs.billing",
-    "version": "1.0.4",
     "type": "library",
     "description": "ADVECS billing package",
     "keywords": ["advecs"],
