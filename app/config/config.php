@@ -11,8 +11,8 @@ return [
     ],
     'pscb'       => [
         'url'         => 'https://oosdemo.pscb.ru/',
-        'marketPlace' => '159846510',
-        'secretKey'   => '111111', //%PSCB_KEY%
+        'marketPlace' => '47607', // 159846510
+        'secretKey'   => '%PSCB_KEY%',
     ],
     'app'        => [
         'domain'   => '%APP_DOMAIN%',
