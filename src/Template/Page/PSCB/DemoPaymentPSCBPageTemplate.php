@@ -41,12 +41,15 @@ class DemoPaymentPSCBPageTemplate extends PageTemplate
     protected function getContent(): string
     {
         $html = '';
-        $html .= '<form method="post" action="' . $this->url . '">';
+        $html .= '<form name="form-pscb-payment" method="post" action="' . $this->url . '">';
         $html .= '<input type="hidden" name="marketPlace" value="' . $this->marketPlace . '" />';
         $html .= '<input type="hidden" name="message" value="' . $this->message . '" />';
         $html .= '<input type="hidden" name="signature" value="' . $this->signature . '" />';
         $html .= '<button>Перейти к оплате на сайт ПСКБ</button>';
         $html .= '</form>';
+        $html .= '<script>';
+        //$html .= 'document.forms["form-pscb-payment"].submit();';
+        $html .= '</script>';
         return $html;
     }
 }
