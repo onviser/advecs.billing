@@ -58,21 +58,19 @@ class DemoPSCBController extends Controller
             $urlPSCB = $this->hConfig->get('pscb.url') . 'pay/';
             $marketPlace = $this->hConfig->get('pscb.marketPlace');
             $secretKey = $this->hConfig->get('pscb.secretKey');
-            echo "secretKey: $secretKey" . '<br />';
 
             $message = [
                 "amount"          => 1,
                 "orderId"         => 2,
                 "details"         => 'test payment',
                 "customerAccount" => 3,
-                //"successUrl"      => $url . '/pscb/success.html',
-                //"failUrl"         => $url . '/pscb/fail.html',
+                "successUrl"      => $url . '/pscb/success.html',
+                "failUrl"         => $url . '/pscb/fail.html',
                 'data'            => [
                     'debug' => true
                 ]
             ];
             $messageText = json_encode($message);
-            echo $messageText;
 
             $hTemplatePage = new DemoPaymentPSCBPageTemplate(
                 $urlPSCB,
