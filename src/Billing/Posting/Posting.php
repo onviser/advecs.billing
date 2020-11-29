@@ -105,49 +105,49 @@ class Posting
     }
 
     /**
-     * @param Account $hAccount
+     * @param Account|null $hAccount
      * @return $this
      */
-    public function setAccount(Account $hAccount): self
+    public function setAccount(?Account $hAccount): self
     {
         $this->hAccount = $hAccount;
         return $this;
     }
 
-    /** @return Account */
-    public function getAccount()
+    /** @return Account|null */
+    public function getAccount(): ?Account
     {
         return $this->hAccount;
     }
 
     /**
-     * @param Account $hFrom
+     * @param Account|null $hFrom
      * @return $this
      */
-    public function setFrom(Account $hFrom): self
+    public function setFrom(?Account $hFrom): self
     {
         $this->hFrom = $hFrom;
         return $this;
     }
 
-    /** @return Account */
-    public function getFrom()
+    /** @return Account|null */
+    public function getFrom(): ?Account
     {
         return $this->hFrom;
     }
 
     /**
-     * @param Account $hTo
+     * @param Account|null $hTo
      * @return $this
      */
-    public function setTo(Account $hTo): self
+    public function setTo(?Account $hTo): self
     {
         $this->hTo = $hTo;
         return $this;
     }
 
-    /** @return Account */
-    public function getTo()
+    /** @return Account|null */
+    public function getTo(): ?Account
     {
         return $this->hTo;
     }

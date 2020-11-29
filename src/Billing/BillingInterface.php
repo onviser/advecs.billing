@@ -16,17 +16,17 @@ interface BillingInterface
 {
     /**
      * Аккаунт пользователя в биллинге
-     * @return Account
+     * @return Account|null
      * @var int $id
      */
-    public function getAccountUser(int $id);
+    public function getAccountUser(int $id): ?Account;
 
     /**
      * Аккаунт фирмы в биллинге
-     * @return Account
+     * @return Account|null
      * @var int $id
      */
-    public function getAccountFirm(int $id);
+    public function getAccountFirm(int $id): ?Account;
 
     /**
      * Баланс пользователя в рублях
