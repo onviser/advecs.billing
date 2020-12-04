@@ -93,6 +93,7 @@ class MemoryStorage implements StorageInterface
      */
     public function getPosting(Search $hSearch): array
     {
+        $amount = 0;
         $result = [];
         foreach ($this->postingRuble as $accountType => $items) {
             if ($hSearch->getAccountType() > 0) {
@@ -133,6 +134,7 @@ class MemoryStorage implements StorageInterface
                             continue;
                         }
                     }
+                    $amount++;
                     $result[] = $hPosting;
                 }
             }
@@ -145,6 +147,8 @@ class MemoryStorage implements StorageInterface
                 $hSearch->getLimit()
             );
         }
+
+        $hSearch->setAmountPosting($amount);
 
         return $result;
     }

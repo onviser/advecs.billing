@@ -22,6 +22,8 @@ class Search
 
     protected $comment = '';
 
+    protected $amountPosting = 0;
+
     /**
      * Search constructor.
      * @param int $account
@@ -155,5 +157,21 @@ class Search
     public function getComment(): string
     {
         return $this->comment;
+    }
+
+    /**
+     * @param int $amountPosting
+     * @return $this
+     */
+    public function setAmountPosting(int $amountPosting): self
+    {
+        $this->amountPosting = $amountPosting;
+        return $this;
+    }
+
+    /** @return int */
+    public function getAmountPosting(): int
+    {
+        return $this->amountPosting;
     }
 }

@@ -79,6 +79,7 @@ try {
     foreach ($postings as $hPosting) {
         echo " - проводка {$hPosting->getId()}: {$hPosting->getAmount()} бон., {$hPosting->getComment()}" . PHP_EOL;
     }
+    echo " - кол-во проводок: {$hSearch->getAmountPosting()}" . PHP_EOL;
 
     echo "баланс пользователя в рублях [{$user1}]: " . $hBilling->getUserBalanceRuble($user1) . PHP_EOL;
     echo "баланс пользователя в бонусах [{$user1}]: " . $hBilling->getUserBalanceBonus($user1) . PHP_EOL;

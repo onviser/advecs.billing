@@ -222,6 +222,20 @@ class MySQLStorage implements StorageInterface
             $where[] = 'posting_comment LIKE "%' . strval($hSearch->getComment()) . '%"';
         }
 
+        // получаем общее кол-во проводок по запросу
+        $sql = 'SELECT ';
+        $sql .= 'COUNT(id) AS cnt ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        if (count($where)) {
+            $sql .= 'WHERE ' . implode(' AND ', $where);
+        }
+        $row = $this->getRow($sql);
+        $amountPosting = intval($row['cnt']);
+        if ($amountPosting === 0) {
+            return [];
+        }
+        $hSearch->setAmountPosting($amountPosting);
+
         $sql = 'SELECT ';
         $sql .= '* ';
         $sql .= 'FROM ' . $tableName . ' ';

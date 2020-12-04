@@ -148,10 +148,11 @@ class BillingTest extends TestCase
         $posting = $hBilling->getPosting(new Search());
         $this->assertCount(10, $posting);
 
-        $posting = $hBilling->getPosting(
-            (new Search(self::ID_USER_1, Account::TYPE_USER))
-                ->setAmount(200, 500));
+        $hSearch = (new Search(self::ID_USER_1, Account::TYPE_USER))
+            ->setAmount(200, 500);
+        $posting = $hBilling->getPosting($hSearch);
         $this->assertCount(3, $posting);
+        $this->assertEquals(3, $hSearch->getAmountPosting());
 
         $posting = $hBilling->getPosting(
             (new Search())
