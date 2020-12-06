@@ -7,6 +7,7 @@ use Advecs\Billing\Exception\BillingException;
 use Advecs\Billing\Exception\MySQLException;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\MySQLStorage;
+use Advecs\Billing\Search\SearchAccount;
 
 $dir = '..' . DIRECTORY_SEPARATOR;
 $dir .= 'app' . DIRECTORY_SEPARATOR;
@@ -80,6 +81,13 @@ try {
         echo " - проводка {$hPosting->getId()}: {$hPosting->getAmount()} бон., {$hPosting->getComment()}" . PHP_EOL;
     }
     echo " - кол-во проводок: {$hSearch->getAmountPosting()}" . PHP_EOL;
+
+    $hSearchAccount = new SearchAccount();
+    $account = $hBilling->searchAccount($hSearchAccount);
+    foreach ($account as $hAccount) {
+        echo " - аккаунт {$hAccount->getId()}: {$hAccount->getBalance()} руб., {$hAccount->getBalanceBonus()} бон." . PHP_EOL;
+    }
+    echo " - кол-во аккаунтов: {$hSearchAccount->getAmount()}" . PHP_EOL;
 
     echo "баланс пользователя в рублях [{$user1}]: " . $hBilling->getUserBalanceRuble($user1) . PHP_EOL;
     echo "баланс пользователя в бонусах [{$user1}]: " . $hBilling->getUserBalanceBonus($user1) . PHP_EOL;

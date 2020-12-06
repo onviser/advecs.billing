@@ -9,6 +9,7 @@ use Advecs\Billing\Exception\MySQLException;
 use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
+use Advecs\Billing\Search\SearchAccount;
 use mysqli;
 use mysqli_result;
 
@@ -445,6 +446,67 @@ class MySQLStorage implements StorageInterface
         );
         $hPSCBPayment->setId($this->insert($sql));
         return $hPSCBPayment->getId() > 0;
+    }
+
+    /**
+     * @param SearchAccount $hSearch
+     * @return Account[]
+     * @throws MySQLException
+     */
+    public function searchAccount(SearchAccount $hSearch): array
+    {
+        $tableName = 'billing_account';
+
+        $where = [];
+        if ($hSearch->getAccount() != 0) {
+            $where[] = 'id_account = "' . intval($hSearch->getAccount()) . '"';
+        }
+        if ($hSearch->getAccountType() != 0) {
+            $where[] = 'id_type = "' . intval($hSearch->getAccountType()) . '"';
+        }
+        if ($hSearch->getExternal() != 0) {
+            $where[] = 'id_external = "' . intval($hSearch->getExternal()) . '"';
+        }
+
+        $sql = 'SELECT ';
+        $sql .= 'COUNT(id_account) AS cnt ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        if (count($where)) {
+            $sql .= 'WHERE ' . implode(' AND ', $where);
+        }
+        $row = $this->getRow($sql);
+        $amount = intval($row['cnt']);
+        if ($amount === 0) {
+            return [];
+        }
+        $hSearch->setAmount($amount);
+
+        $sql = 'SELECT ';
+        $sql .= 'id_type, ';
+        $sql .= 'id_external, ';
+        $sql .= 'account_balance, ';
+        $sql .= 'account_balance_bonus, ';
+        $sql .= 'id_account ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        if (count($where)) {
+            $sql .= 'WHERE ' . implode(' AND ', $where);
+        }
+        $sql .= 'ORDER BY id_account ASC ';
+        $sql .= 'LIMIT ' . $hSearch->getOffset() . ', ' . $hSearch->getLimit();
+        $rows = $this->getRows($sql);
+        if (!$rows) {
+            return [];
+        }
+        $account = [];
+        foreach ($rows as $row) {
+            $id = intval($row['id_account']);
+            $type = intval($row['id_type']);
+            $balance = floatval($row['account_balance']);
+            $balanceBonus = floatval($row['account_balance_bonus']);
+            $account[$id] = ($type === Account::TYPE_FIRM) ? new Firm($id, $balance, $balanceBonus) : new User($id, $balance, $balanceBonus);
+        }
+
+        return $account;
     }
 
     // ---------- функции для работы с базой ----------

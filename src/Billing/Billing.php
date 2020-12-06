@@ -7,6 +7,7 @@ use Advecs\Billing\Exception\NotEnoughException;
 use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
+use Advecs\Billing\Search\SearchAccount;
 use Advecs\Billing\Storage\StorageInterface;
 
 /**
@@ -284,5 +285,14 @@ class Billing implements BillingInterface
     {
         $this->hStorage = $hStorage;
         return $this;
+    }
+
+    /**
+     * @param SearchAccount $hSearch
+     * @return Account[]
+     */
+    public function searchAccount(SearchAccount $hSearch): array
+    {
+        return $this->hStorage->searchAccount($hSearch);
     }
 }

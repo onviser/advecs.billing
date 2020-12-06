@@ -8,6 +8,7 @@ use Advecs\Billing\Account\User;
 use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
+use Advecs\Billing\Search\SearchAccount;
 
 /**
  * Class MemoryStorage
@@ -203,5 +204,14 @@ class MemoryStorage implements StorageInterface
         $hAccount->setBalanceBonus($balanceBonus);
 
         return true;
+    }
+
+    /**
+     * @param SearchAccount $hSearch
+     * @return Account[]
+     */
+    public function searchAccount(SearchAccount $hSearch): array
+    {
+        return $this->account;
     }
 }

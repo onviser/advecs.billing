@@ -6,6 +6,7 @@ use Advecs\Billing\Account\Account;
 use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
+use Advecs\Billing\Search\SearchAccount;
 
 /**
  * Interface StorageInterface
@@ -61,4 +62,10 @@ interface StorageInterface
      * @return bool
      */
     public function addPSCBPayment(PSCBPayment $hPayment): bool;
+
+    /**
+     * @param SearchAccount $hSearch
+     * @return Account[]
+     */
+    public function searchAccount(SearchAccount $hSearch): array;
 }
