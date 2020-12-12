@@ -14,6 +14,7 @@ CREATE TABLE billing_account
     account_add           INTEGER UNSIGNED DEFAULT 0,
     account_update        INTEGER UNSIGNED DEFAULT 0
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 1000
   DEFAULT CHARSET = utf8 COMMENT 'аккаунты пользователей и фирм';
 ALTER TABLE billing_account
     ADD INDEX (id_external);
