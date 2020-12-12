@@ -45,6 +45,38 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
+     * @param int $account
+     * @return int
+     */
+    public function getIdUser(int $account): int
+    {
+        if (array_key_exists(Account::TYPE_USER, $this->account)) {
+            foreach ($this->account[Account::TYPE_USER] as $id => $hAccount) {
+                if ($account === $id) {
+                    return $hAccount->getIdExternal();
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * @param int $account
+     * @return int
+     */
+    public function getIdFirm(int $account): int
+    {
+        if (array_key_exists(Account::TYPE_FIRM, $this->account)) {
+            foreach ($this->account[Account::TYPE_FIRM] as $id => $hAccount) {
+                if ($account === $id) {
+                    return $hAccount->getIdExternal();
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
      * @param Posting $hPostingCredit
      * @return bool
      */

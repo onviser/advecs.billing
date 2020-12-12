@@ -23,11 +23,25 @@ interface BillingInterface
     public function getAccountUser(int $id): ?Account;
 
     /**
+     * возвращает id пользоватетеля по аккаунту
+     * @param int $account
+     * @return int
+     */
+    public function getIdUser(int $account): int;
+
+    /**
      * Аккаунт фирмы в биллинге
      * @return Account|null
      * @var int $id
      */
     public function getAccountFirm(int $id): ?Account;
+
+    /**
+     * возвращает id фирмы по аккаунту
+     * @param int $account
+     * @return int
+     */
+    public function getIdFirm(int $account): int;
 
     /**
      * Баланс пользователя в рублях

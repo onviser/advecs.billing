@@ -22,6 +22,18 @@ interface StorageInterface
     public function getAccount(int $id, int $type = Account::TYPE_USER): Account;
 
     /**
+     * @param int $account
+     * @return int
+     */
+    public function getIdUser(int $account): int;
+
+    /**
+     * @param int $account
+     * @return int
+     */
+    public function getIdFirm(int $account): int;
+
+    /**
      * @param Posting $hPostingCredit
      * @return bool
      */

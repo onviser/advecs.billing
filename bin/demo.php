@@ -96,6 +96,13 @@ try {
     echo "баланс фирмы в рублях [{$firm1}]: " . $hBilling->getFirmBalanceRuble($firm1) . PHP_EOL;
     echo "баланс фирмы в рублях [{$firm2}]: " . $hBilling->getFirmBalanceRuble($firm2) . PHP_EOL;
 
+    $hAccount = $hBilling->getAccountUser($user1);
+    $user = $hBilling->getIdUser($hAccount->getId());
+    echo "счет [{$hAccount->getId()}]: пользователь: " . $user . PHP_EOL;
+
+    $hAccount = $hBilling->getAccountUser($user2);
+    $user = $hBilling->getIdUser($hAccount->getId());
+    echo "счет [{$hAccount->getId()}]: пользователь: " . $user . PHP_EOL;
 }
 catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;

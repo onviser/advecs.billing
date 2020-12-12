@@ -86,6 +86,50 @@ class MySQLStorage implements StorageInterface
     }
 
     /**
+     * @param int $account
+     * @return int
+     * @throws MySQLException
+     */
+    public function getIdUser(int $account): int
+    {
+        $tableName = 'billing_account';
+
+        $sql = 'SELECT ';
+        $sql .= 'id_external ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        $sql .= 'WHERE id_account = "%d" ';
+        $sql .= 'AND id_type = "%d" ';
+        $sql = sprintf($sql, $account, Account::TYPE_USER);
+        $row = $this->getRow($sql);
+        if ($row) {
+            return intval($row['id_external']);
+        }
+        return 0;
+    }
+
+    /**
+     * @param int $account
+     * @return int
+     * @throws MySQLException
+     */
+    public function getIdFirm(int $account): int
+    {
+        $tableName = 'billing_account';
+
+        $sql = 'SELECT ';
+        $sql .= 'id_external ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        $sql .= 'WHERE id_account = "%d" ';
+        $sql .= 'AND id_type = "%d" ';
+        $sql = sprintf($sql, $account, Account::TYPE_FIRM);
+        $row = $this->getRow($sql);
+        if ($row) {
+            return intval($row['id_external']);
+        }
+        return 0;
+    }
+
+    /**
      * @param Posting $hPostingCredit
      * @return bool
      * @throws MySQLException

@@ -16,6 +16,32 @@ class BillingTest extends TestCase
     const ID_USER_2 = 2;
     const ID_FIRM_1 = 1;
     const ID_FIRM_2 = 2;
+    const ID_EXTERNAL_1 = 111;
+    const ID_EXTERNAL_2 = 222;
+
+    /** @return bool */
+    public function testGetIdUser(): bool
+    {
+        $hBilling = $this->getBilling();
+
+        // пользователь 1
+        $hBilling->addUserRuble(self::ID_USER_1, 3.14, 'пополнение счета');
+        $hBilling->addUserRuble(self::ID_USER_1, 6.28, 'еще одно пополнение счета');
+        $hBilling->addUserBonus(self::ID_USER_1, 0.31, 'зачисление бонусов');
+
+        // пользователь 2
+        $hBilling->addUserRuble(self::ID_USER_2, 1.11, 'пополнение счета');
+        $hBilling->addUserRuble(self::ID_USER_2, 2.22, 'пополнение счета');
+
+        $hAccount1 = $hBilling->getAccountUser(self::ID_USER_1);
+        $hAccount1->setIdExternal(self::ID_EXTERNAL_1);
+        //$this->assertEquals(self::ID_USER_1, $hBilling->getIdUser(self::ID_EXTERNAL_1));
+
+        $hBilling->getAccountUser(self::ID_USER_2)->setIdExternal(self::ID_EXTERNAL_2);
+        //$this->assertEquals(self::ID_USER_2, $hBilling->getIdUser(self::ID_EXTERNAL_2));
+
+        return true;
+    }
 
     /** @return bool */
     public function testUserAdd(): bool

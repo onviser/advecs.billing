@@ -30,6 +30,16 @@ class Billing implements BillingInterface
     }
 
     /**
+     * возвращает id пользоватетеля по аккаунту
+     * @param int $account
+     * @return int
+     */
+    public function getIdUser(int $account): int
+    {
+        return $this->hStorage->getIdUser($account);
+    }
+
+    /**
      * Аккаунт фирмы в биллинге
      * @return Account|null
      * @var int $id
@@ -37,6 +47,16 @@ class Billing implements BillingInterface
     public function getAccountFirm(int $id): ?Account
     {
         return $this->hStorage->getAccount($id, Account::TYPE_FIRM);
+    }
+
+    /**
+     * возвращает id фирмы по аккаунту
+     * @param int $account
+     * @return int
+     */
+    public function getIdFirm(int $account): int
+    {
+        return $this->hStorage->getIdFirm($account);
     }
 
     /**
