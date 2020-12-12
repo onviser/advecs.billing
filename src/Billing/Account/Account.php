@@ -42,6 +42,12 @@ abstract class Account
         return $this->id;
     }
 
+    /** @return bool */
+    public function isExist(): bool
+    {
+        return $this->getId() > 0;
+    }
+
     /**
      * @param float $balance
      * @return $this

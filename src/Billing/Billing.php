@@ -26,7 +26,11 @@ class Billing implements BillingInterface
      */
     public function getAccountUser(int $id): ?Account
     {
-        return $this->hStorage->getAccount($id, Account::TYPE_USER);
+        $hAccount = $this->hStorage->getAccount($id, Account::TYPE_USER);
+        if ($hAccount->isExist()) {
+            $hAccount->setIdExternal($id);
+        }
+        return $hAccount;
     }
 
     /**
@@ -46,7 +50,11 @@ class Billing implements BillingInterface
      */
     public function getAccountFirm(int $id): ?Account
     {
-        return $this->hStorage->getAccount($id, Account::TYPE_FIRM);
+        $hAccount = $this->hStorage->getAccount($id, Account::TYPE_FIRM);
+        if ($hAccount->isExist()) {
+            $hAccount->setIdExternal($id);
+        }
+        return $hAccount;
     }
 
     /**

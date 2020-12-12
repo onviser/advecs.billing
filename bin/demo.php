@@ -98,15 +98,15 @@ try {
 
     $hAccount = $hBilling->getAccountUser($user1);
     $user = $hBilling->getIdUser($hAccount->getId());
-    echo "счет [{$hAccount->getId()}]: пользователь: " . $user . PHP_EOL;
+    echo "счет [{$hAccount->getId()}, {$hAccount->getIdExternal()}]: пользователь: " . $user . PHP_EOL;
 
     $hAccount = $hBilling->getAccountUser($user2);
     $user = $hBilling->getIdUser($hAccount->getId());
-    echo "счет [{$hAccount->getId()}]: пользователь: " . $user . PHP_EOL;
+    echo "счет [{$hAccount->getId()}, {$hAccount->getIdExternal()}]: пользователь: " . $user . PHP_EOL;
 
     $hAccount = $hBilling->getAccountFirm($firm1);
     $firm = $hBilling->getIdFirm($hAccount->getId());
-    echo "счет [{$hAccount->getId()}]: фирма: " . $firm . PHP_EOL;
+    echo "счет [{$hAccount->getId()}, {$hAccount->getIdExternal()}]: фирма: " . $firm . PHP_EOL;
 }
 catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
