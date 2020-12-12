@@ -103,6 +103,10 @@ try {
     $hAccount = $hBilling->getAccountUser($user2);
     $user = $hBilling->getIdUser($hAccount->getId());
     echo "счет [{$hAccount->getId()}]: пользователь: " . $user . PHP_EOL;
+
+    $hAccount = $hBilling->getAccountFirm($firm1);
+    $firm = $hBilling->getIdFirm($hAccount->getId());
+    echo "счет [{$hAccount->getId()}]: фирма: " . $firm . PHP_EOL;
 }
 catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
