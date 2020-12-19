@@ -28,9 +28,10 @@ try {
         ));
 
     $user1 = 415617;
-    $hBilling->addUserRuble($user1, 1.0, 'пополнение счета пользователя');
-    $hBilling->addUserBonus($user1, 3.0, 'пополнение бонусного счета пользователя');
+    $hBilling->addUserRuble($user1, 1000.0, 'пополнение счета пользователя');
+    $hBilling->addUserBonus($user1, 100.0, 'пополнение бонусного счета пользователя');
 
+    /*
     $user2 = 2;
     $hBilling->addUserRuble($user2, 2.0, 'пополнение счета пользователя');
     $hBilling->addUserBonus($user2, 4.0, 'пополнение бонусного счета пользователя');
@@ -107,6 +108,7 @@ try {
     $hAccount = $hBilling->getAccountFirm($firm1);
     $firm = $hBilling->getIdFirm($hAccount->getId());
     echo "счет [{$hAccount->getId()}, {$hAccount->getIdExternal()}]: фирма: " . $firm . PHP_EOL;
+    */
 }
 catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
