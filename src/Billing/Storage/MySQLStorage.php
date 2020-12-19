@@ -5,6 +5,7 @@ namespace Advecs\Billing\Storage;
 use Advecs\Billing\Account\Account;
 use Advecs\Billing\Account\Firm;
 use Advecs\Billing\Account\User;
+use Advecs\Billing\Exception\BillingException;
 use Advecs\Billing\Exception\MySQLException;
 use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\PSCB\PSCBPayment;
@@ -49,6 +50,7 @@ class MySQLStorage implements StorageInterface
      * @param int $idExternal
      * @param int $type
      * @return Account
+     * @throws BillingException
      * @throws MySQLException
      */
     public function getAccount(int $idExternal, int $type = Account::TYPE_USER): Account
@@ -70,6 +72,11 @@ class MySQLStorage implements StorageInterface
             $balance_bonus = floatval($row['account_balance_bonus']);
         }
         else {
+
+            if ($idExternal === 0) {
+                throw new BillingException('не указан внутренний идентификатор пользователя');
+            }
+
             $time = time();
             $sql = 'INSERT INTO ' . $tableName . ' (id_type, id_external, account_add, account_update) ';
             $sql .= 'VALUES ("%d", "%d", "%d", "%d")';
