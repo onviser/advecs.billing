@@ -27,7 +27,7 @@ try {
             intval($hConfig->get('db-billing.port'))
         ));
 
-    $user1 = 1;
+    $user1 = 415617;
     $hBilling->addUserRuble($user1, 1.0, 'пополнение счета пользователя');
     $hBilling->addUserBonus($user1, 3.0, 'пополнение бонусного счета пользователя');
 
