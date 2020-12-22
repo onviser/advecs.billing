@@ -60,12 +60,12 @@ class DemoPSCBController extends Controller
             $secretKey = $this->hConfig->get('pscb.secretKey');
 
             $message = [
-                "amount"          => 1,
-                "orderId"         => 2,
-                "details"         => 'test payment',
-                "customerAccount" => 3,
-                "successUrl"      => $url . '/pscb/success.html',
-                "failUrl"         => $url . '/pscb/fail.html',
+                "amount"          => 100,
+                "orderId"         => 12,
+                "details"         => 'пополнение счета 1005 на сумму 100 руб., оплата через ПСКБ',
+                "customerAccount" => 1005,
+                "successUrl"      => 'http://advecs.local/billing/payment-success.html',
+                "failUrl"         => 'http://advecs.local/billing/payment-error.html',
                 'data'            => [
                     'debug' => true
                 ]
