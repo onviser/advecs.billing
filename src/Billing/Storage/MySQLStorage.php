@@ -511,7 +511,7 @@ class MySQLStorage implements StorageInterface
         $insert = [
             'notify_raw' => '"%s"',
             'notify_json'    => '"%s"',
-            'payment_add'     => '"%d"'
+            'notify_add'     => '"%d"'
         ];
         $sql = 'INSERT INTO ' . $tableName . ' (' . implode(', ', array_keys($insert)) . ') ';
         $sql .= 'VALUES (' . implode(', ', $insert) . ')';
