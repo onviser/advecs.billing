@@ -6,6 +6,7 @@ use Advecs\Billing\Account\Account;
 use Advecs\Billing\Account\Firm;
 use Advecs\Billing\Account\User;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\PSCB\PSCBNotify;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Search\SearchAccount;
@@ -27,6 +28,9 @@ class MemoryStorage implements StorageInterface
 
     /** @var PSCBPayment[] */
     protected $payment = [];
+
+    /** @var PSCBNotify[] */
+    protected $notify = [];
 
     /**
      * @param int $id
@@ -202,6 +206,16 @@ class MemoryStorage implements StorageInterface
     public function addPSCBPayment(PSCBPayment $hPSCBPayment): bool
     {
         $this->payment[] = $hPSCBPayment;
+        return true;
+    }
+
+    /**
+     * @param PSCBNotify $hPSCBNotify
+     * @return bool
+     */
+    public function addPSCBNotify(PSCBNotify $hPSCBNotify): bool
+    {
+        $this->notify[] = $hPSCBNotify;
         return true;
     }
 

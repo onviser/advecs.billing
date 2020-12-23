@@ -4,6 +4,7 @@ namespace Advecs\Billing;
 
 use Advecs\Billing\Account\Account;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\PSCB\PSCBNotify;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Search\SearchAccount;
@@ -165,6 +166,12 @@ interface BillingInterface
      * @return bool
      */
     public function addPSCBPayment(PSCBPayment $hPayment): bool;
+
+    /**
+     * @param PSCBNotify $hPSCBNotify
+     * @return bool
+     */
+    public function addPSCBNotify(PSCBNotify $hPSCBNotify): bool;
 
     /**
      * @param StorageInterface $hStorage

@@ -81,3 +81,14 @@ ALTER TABLE billing_pscb_payment
     ADD INDEX (payment_status);
 ALTER TABLE billing_pscb_payment
     ADD INDEX (payment_add);
+
+
+DROP TABLE IF EXISTS billing_pscb_notify;
+CREATE TABLE billing_pscb_notify
+(
+    id_notify   INTEGER PRIMARY KEY AUTO_INCREMENT,
+    notify_raw  TEXT,
+    notify_json TEXT,
+    notify_add  INTEGER UNSIGNED DEFAULT 0
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT 'ПСКБ, уведомления от банка';

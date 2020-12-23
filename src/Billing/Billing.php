@@ -5,6 +5,7 @@ namespace Advecs\Billing;
 use Advecs\Billing\Account\Account;
 use Advecs\Billing\Exception\NotEnoughException;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\PSCB\PSCBNotify;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Search\SearchAccount;
@@ -303,6 +304,15 @@ class Billing implements BillingInterface
     public function addPSCBPayment(PSCBPayment $hPayment): bool
     {
         return $this->hStorage->addPSCBPayment($hPayment);
+    }
+
+    /**
+     * @param PSCBNotify $hNotify
+     * @return bool
+     */
+    public function addPSCBNotify(PSCBNotify $hNotify): bool
+    {
+        return $this->hStorage->addPSCBNotify($hNotify);
     }
 
     /**

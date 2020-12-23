@@ -8,6 +8,7 @@ use Advecs\Billing\Account\User;
 use Advecs\Billing\Exception\BillingException;
 use Advecs\Billing\Exception\MySQLException;
 use Advecs\Billing\Posting\Posting;
+use Advecs\Billing\PSCB\PSCBNotify;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Search\SearchAccount;
@@ -497,6 +498,30 @@ class MySQLStorage implements StorageInterface
         );
         $hPSCBPayment->setId($this->insert($sql));
         return $hPSCBPayment->getId() > 0;
+    }
+
+    /**
+     * @param PSCBNotify $hPSCBNotify
+     * @return bool
+     * @throws MySQLException
+     */
+    public function addPSCBNotify(PSCBNotify $hPSCBNotify): bool
+    {
+        $tableName = 'billing_pscb_notify';
+        $insert = [
+            'notify_raw' => '"%s"',
+            'notify_json'    => '"%s"',
+            'payment_add'     => '"%d"'
+        ];
+        $sql = 'INSERT INTO ' . $tableName . ' (' . implode(', ', array_keys($insert)) . ') ';
+        $sql .= 'VALUES (' . implode(', ', $insert) . ')';
+        $sql = sprintf($sql,
+            $hPSCBNotify->getRaw(),
+            $hPSCBNotify->getJSON(),
+            time()
+        );
+        $hPSCBNotify->setId($this->insert($sql));
+        return $hPSCBNotify->getId() > 0;
     }
 
     /**
