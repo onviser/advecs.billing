@@ -501,6 +501,16 @@ class MySQLStorage implements StorageInterface
     }
 
     /**
+     * @param PSCBPayment $hPSCBPayment
+     * @return bool
+     * @throws MySQLException
+     */
+    public function updatePSCBPayment(PSCBPayment $hPSCBPayment): bool
+    {
+        return false;
+    }
+
+    /**
      * @param PSCBNotify $hPSCBNotify
      * @return bool
      * @throws MySQLException
@@ -509,9 +519,9 @@ class MySQLStorage implements StorageInterface
     {
         $tableName = 'billing_pscb_notify';
         $insert = [
-            'notify_raw' => '"%s"',
-            'notify_json'    => '"%s"',
-            'notify_add'     => '"%d"'
+            'notify_raw'  => '"%s"',
+            'notify_json' => '"%s"',
+            'notify_add'  => '"%d"'
         ];
         $sql = 'INSERT INTO ' . $tableName . ' (' . implode(', ', array_keys($insert)) . ') ';
         $sql .= 'VALUES (' . implode(', ', $insert) . ')';
@@ -585,6 +595,15 @@ class MySQLStorage implements StorageInterface
         }
 
         return $account;
+    }
+
+    /**
+     * @param int $id
+     * @return PSCBPayment|null
+     */
+    public function searchPaymentById(int $id): ?PSCBPayment
+    {
+        return null;
     }
 
     // ---------- функции для работы с базой ----------

@@ -19,8 +19,8 @@ class PSCBNotify
 
     /**
      * PSCBNotify constructor.
-     * @param string $raw
-     * @param string $json
+     * @param string $raw (передается в base64)
+     * @param string $json (передается в base64)
      */
     public function __construct(string $raw, string $json)
     {
@@ -54,5 +54,28 @@ class PSCBNotify
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /** @return PSCBOrder[] */
+    public function getOrders(): array
+    {
+        $jsonAsString = base64_encode($this->json);
+        $json = json_decode($jsonAsString, true);
+        if (!isset($json['payments'])) {
+            return [];
+        }
+
+        $orders = [];
+        foreach ($json['payments'] as $item) {
+            $orderId = intval($item['orderId']);
+            $account = intval($item['account']);
+            $amount = floatval($item['amount']);
+            $state = strval($item['state']);
+            $paymentMethod = strval($item['paymentMethod']);
+            $paymentJSON = json_encode($item);
+
+            $orders[] = new PSCBOrder($orderId, $account, $amount, $state, $paymentMethod, $paymentJSON);
+        }
+        return $orders;
     }
 }

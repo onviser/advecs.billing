@@ -210,6 +210,21 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
+     * @param PSCBPayment $hPayment
+     * @return bool
+     */
+    public function updatePSCBPayment(PSCBPayment $hPayment): bool
+    {
+        foreach ($this->payment as $index => $hItem) {
+            if ($hItem->getId() === $hPayment->getId()) {
+                $this->payment[$index] = $hPayment;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @param PSCBNotify $hPSCBNotify
      * @return bool
      */
@@ -259,5 +274,19 @@ class MemoryStorage implements StorageInterface
     public function searchAccount(SearchAccount $hSearch): array
     {
         return $this->account;
+    }
+
+    /**
+     * @param int $id
+     * @return PSCBPayment|null
+     */
+    public function searchPaymentById(int $id): ?PSCBPayment
+    {
+        foreach ($this->payment as $hPayment) {
+            if ($hPayment->getId() === $id) {
+                return $hPayment;
+            }
+        }
+        return null;
     }
 }

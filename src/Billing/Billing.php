@@ -6,6 +6,7 @@ use Advecs\Billing\Account\Account;
 use Advecs\Billing\Exception\NotEnoughException;
 use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\PSCB\PSCBNotify;
+use Advecs\Billing\PSCB\PSCBOrder;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Search\SearchAccount;
@@ -313,6 +314,72 @@ class Billing implements BillingInterface
     public function addPSCBNotify(PSCBNotify $hNotify): bool
     {
         return $this->hStorage->addPSCBNotify($hNotify);
+    }
+
+    /**
+     * @param PSCBNotify $hPSCBNotify
+     * @return array
+     */
+    public function processingPSCBNotify(PSCBNotify $hPSCBNotify): array
+    {
+        if (!$this->addPSCBNotify($hPSCBNotify)) {
+            return [];
+        }
+
+        $orders = $hPSCBNotify->getOrders();
+        foreach ($orders as $hOrder) {
+            $hPayment = $this->hStorage->searchPaymentById($hOrder->getId());
+            if (!$hPayment) {
+                $hOrder
+                    ->setAction(PSCBOrder::STATUS_REJECT)
+                    ->setError('не удалось найти платеж ' . $hOrder->getId());
+                continue;
+            }
+
+            // платеж еще не обработан
+            if ($hOrder->getState() !== 'end') {
+                $hOrder->setError('платеж не обработан, состояние: ' . $hOrder->getState());
+                continue;
+            }
+
+            // платеж уже обработан
+            if ($hPayment->getStatus() === PSCBPayment::STATUS_END) {
+                $hOrder->setError('платеж уже обработан');
+                continue;
+            }
+
+            // определяем пользователя по номеру счета
+            $user = $this->getIdUser($hOrder->getAccount());
+            if ($user === 0) {
+                $hOrder
+                    ->setAction(PSCBOrder::STATUS_REJECT)
+                    ->setError('не удалось найти пользователя по номеру счета ' . $hOrder->getAccount());
+                continue;
+            }
+
+            $hPayment
+                ->setStatus(PSCBPayment::STATUS_END)
+                ->setType($hOrder->getMethod())
+                ->setJSON($hOrder->getJSON());
+
+            // ошибка пополнения счета
+            if (!$this->hStorage->updatePSCBPayment($hPayment)) {
+                $hOrder->setError('не удалось обновить платеж ' . $hPayment->getId());
+                continue;
+            }
+
+            $comment = 'пополнение счета, ПСКБ, платеж ' . $hOrder->getId();
+            if (!$this->addUserRuble($user, $hPayment->getAmount(), $comment)) {
+                $hOrder
+                    ->setAction(PSCBOrder::STATUS_REJECT)
+                    ->setError('не удалось пополниеть счет ' . $hOrder->getAccount());
+                continue;
+            }
+
+            $hOrder->setAction(PSCBOrder::STATUS_CONFIRM);
+        }
+
+        return $orders;
     }
 
     /**

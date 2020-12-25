@@ -12,6 +12,7 @@ class PSCBPayment
     const TYPE_ALFA_CLICK = 'alfa';
 
     const STATUS_NEW = 1;
+    const STATUS_END = 2;
 
     /** @var int */
     protected $id = 0;
@@ -30,6 +31,9 @@ class PSCBPayment
 
     /** @var string */
     protected $type = self::TYPE_CARD;
+
+    /** @var string */
+    protected $json = '';
 
     /**
      * PSCBPayment constructor.
@@ -120,9 +124,19 @@ class PSCBPayment
         return $this->type;
     }
 
+    /**
+     * @param string $json
+     * @return $this
+     */
+    public function setJSON(string $json): self
+    {
+        $this->json = $json;
+        return $this;
+    }
+
     /** @return string */
     public function getJSON(): string
     {
-        return '';
+        return $this->json;
     }
 }

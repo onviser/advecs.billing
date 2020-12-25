@@ -174,6 +174,12 @@ interface BillingInterface
     public function addPSCBNotify(PSCBNotify $hPSCBNotify): bool;
 
     /**
+     * @param PSCBNotify $hPSCBNotify
+     * @return array
+     */
+    public function processingPSCBNotify(PSCBNotify $hPSCBNotify): array;
+
+    /**
      * @param StorageInterface $hStorage
      * @return $this
      */

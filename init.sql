@@ -72,6 +72,7 @@ CREATE TABLE billing_pscb_payment
     payment_type    CHAR(20)         DEFAULT '',
     payment_status  TINYINT UNSIGNED DEFAULT 0,
     payment_add     INTEGER UNSIGNED DEFAULT 0,
+    payment_update  INTEGER UNSIGNED DEFAULT 0,
     payment_json    TEXT
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT 'ПСКБ, платежи';
@@ -86,9 +87,11 @@ ALTER TABLE billing_pscb_payment
 DROP TABLE IF EXISTS billing_pscb_notify;
 CREATE TABLE billing_pscb_notify
 (
-    id_notify   INTEGER PRIMARY KEY AUTO_INCREMENT,
-    notify_raw  TEXT,
-    notify_json TEXT,
-    notify_add  INTEGER UNSIGNED DEFAULT 0
+    id_notify     INTEGER PRIMARY KEY AUTO_INCREMENT,
+    notify_raw    TEXT,
+    notify_json   TEXT,
+    notify_status TINYINT UNSIGNED DEFAULT 1,
+    notify_add    INTEGER UNSIGNED DEFAULT 0
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 1000
   DEFAULT CHARSET = utf8 COMMENT 'ПСКБ, уведомления от банка';

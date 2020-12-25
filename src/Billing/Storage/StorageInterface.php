@@ -77,6 +77,12 @@ interface StorageInterface
     public function addPSCBPayment(PSCBPayment $hPayment): bool;
 
     /**
+     * @param PSCBPayment $hPayment
+     * @return bool
+     */
+    public function updatePSCBPayment(PSCBPayment $hPayment): bool;
+
+    /**
      * @param PSCBNotify $hPSCBNotify
      * @return bool
      */
@@ -87,4 +93,10 @@ interface StorageInterface
      * @return Account[]
      */
     public function searchAccount(SearchAccount $hSearch): array;
+
+    /**
+     * @param int $id
+     * @return PSCBPayment|null
+     */
+    public function searchPaymentById(int $id): ?PSCBPayment;
 }
