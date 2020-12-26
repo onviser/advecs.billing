@@ -669,11 +669,22 @@ class MySQLStorage implements StorageInterface
 
         $payment = [];
         foreach ($rows as $row) {
-            $id = intval($row['id_account']);
-            $type = intval($row['id_type']);
-            $balance = floatval($row['account_balance']);
-            $balanceBonus = floatval($row['account_balance_bonus']);
-            $external = intval($row['id_external']);
+            $id = intval($row['id_payment']);
+            $account = intval($row['id_account']);
+            $amount = intval($row['payment_amount']);
+            $comment = strval($row['payment_comment']);
+            $type = strval($row['payment_type']);
+            $status = intval($row['payment_status']);
+            $add = intval($row['payment_add']);
+            $update = intval($row['payment_update']);
+            $json = strval($row['payment_json']);
+
+            $payment[$id] = (new PSCBPayment($account, $amount, $comment))
+                ->setId($id)
+                ->setType($type)
+                ->setStatus($status)
+                ->setJSON($json)
+                ->setTime($add, $update);
         }
 
         return $payment;
@@ -682,9 +693,16 @@ class MySQLStorage implements StorageInterface
     /**
      * @param int $id
      * @return PSCBPayment|null
+     * @throws MySQLException
      */
     public function searchPaymentById(int $id): ?PSCBPayment
     {
+        $hSearch = (new SearchPayment())
+            ->setId($id);
+        $payment = $this->searchPayment($hSearch);
+        if (count($payment) > 0) {
+            return current($payment);
+        }
         return null;
     }
 

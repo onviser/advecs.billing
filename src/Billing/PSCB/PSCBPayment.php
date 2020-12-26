@@ -35,6 +35,12 @@ class PSCBPayment
     /** @var string */
     protected $json = '';
 
+    /** @var int */
+    protected $timeAdd = 0;
+
+    /** @var int */
+    protected $timeUpdate = 0;
+
     /**
      * PSCBPayment constructor.
      * @param int $account
@@ -138,5 +144,29 @@ class PSCBPayment
     public function getJSON(): string
     {
         return $this->json;
+    }
+
+    /**
+     * @param int $timeAdd
+     * @param int $timeUpdate
+     * @return $this
+     */
+    public function setTime(int $timeAdd, int $timeUpdate): self
+    {
+        $this->timeAdd = $timeAdd;
+        $this->timeUpdate = $timeUpdate;
+        return $this;
+    }
+
+    /** @return int */
+    public function getTimeAdd(): int
+    {
+        return $this->timeAdd;
+    }
+
+    /** @return int */
+    public function getTimeUpdate(): int
+    {
+        return $this->timeUpdate;
     }
 }
