@@ -520,7 +520,8 @@ class MySQLStorage implements StorageInterface
             $hPSCBPayment->getType(),
             $hPSCBPayment->getStatus(),
             time(),
-            $hPSCBPayment->getJSON()
+            base64_encode($hPSCBPayment->getJSON()),
+            $hPSCBPayment->getId()
         );
 
         return $this->update($sql);

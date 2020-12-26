@@ -5,6 +5,8 @@ use Advecs\App\Config\Config;
 use Advecs\Billing\Billing;
 use Advecs\Billing\Exception\BillingException;
 use Advecs\Billing\Exception\MySQLException;
+use Advecs\Billing\PSCB\PSCBNotify;
+use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Storage\MySQLStorage;
 use Advecs\Billing\Search\SearchAccount;
@@ -107,6 +109,72 @@ try {
     $hAccount = $hBilling->getAccountFirm($firm1);
     $firm = $hBilling->getIdFirm($hAccount->getId());
     echo "счет [{$hAccount->getId()}, {$hAccount->getIdExternal()}]: фирма: " . $firm . PHP_EOL;
+
+    // проверка платежей и уведомления
+    $hAccount1 = $hBilling->getAccountUser($user1);
+    $amount1 = 10;
+    $account1 = $hAccount1->getId();
+    $hPayment1 = new PSCBPayment($account1, $amount1, 'платеж 1');
+    $hBilling->addPSCBPayment($hPayment1);
+
+    $hAccount2 = $hBilling->getAccountUser($user2);
+    $amount2 = 20;
+    $account2 = $hAccount2->getId();
+    $hPayment2 = new PSCBPayment($account2, $amount2, 'платеж 2');
+    $hBilling->addPSCBPayment($hPayment2);
+
+    $json = '{
+  "payments": [
+    {
+      "orderId": "' . $hPayment1->getId() . '",
+      "showOrderId": "' . $hPayment1->getId() . '",
+      "paymentId": "229393950",
+      "account": "' . $account1 . '",
+      "amount": ' . $amount1 . ',
+      "state": "end",
+      "marketPlace": 310417760,
+      "paymentMethod": "ac",
+      "stateDate": "2020-12-24T22:12:53.294+03:00",
+      "lastError": {
+        "code": "0",
+        "subCode": "00",
+        "description": "Платеж завершен"
+      }
+    },
+    {
+      "orderId": "' . $hPayment2->getId() . '",
+      "showOrderId": "' . $hPayment2->getId() . '",
+      "paymentId": "229393982",
+      "account": "' . $account2 . '",
+      "amount": ' . $amount2 . ',
+      "state": "end",
+      "marketPlace": 310417760,
+      "paymentMethod": "ac",
+      "stateDate": "2020-12-24T22:20:59.401+03:00",
+      "lastError": {
+        "code": "0",
+        "subCode": "00",
+        "description": "Платеж завершен"
+      }
+    },
+    {
+      "orderId": "3",
+      "showOrderId": "3",
+      "paymentId": "229394049",
+      "account": "' . $account1 . '",
+      "amount": 30,
+      "state": "err",
+      "marketPlace": 310417760,
+      "paymentMethod": "ym",
+      "stateDate": "2020-12-24T22:32:38.328+03:00"
+    }
+    ]
+    }';
+
+    $raw = base64_encode('raw');
+    $json = base64_encode($json);
+    $hNotify = new PSCBNotify($raw, $json);
+    $orders = $hBilling->processingPSCBNotify($hNotify);
 }
 catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
