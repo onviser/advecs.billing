@@ -615,7 +615,7 @@ class MySQLStorage implements StorageInterface
 
     /**
      * @param SearchPayment $hSearch
-     * @return Account[]
+     * @return PSCBPayment[]
      * @throws MySQLException
      */
     public function searchPayment(SearchPayment $hSearch): array
@@ -666,6 +666,17 @@ class MySQLStorage implements StorageInterface
         if (!$rows) {
             return [];
         }
+
+        $payment = [];
+        foreach ($rows as $row) {
+            $id = intval($row['id_account']);
+            $type = intval($row['id_type']);
+            $balance = floatval($row['account_balance']);
+            $balanceBonus = floatval($row['account_balance_bonus']);
+            $external = intval($row['id_external']);
+        }
+
+        return $payment;
     }
 
     /**
@@ -674,18 +685,6 @@ class MySQLStorage implements StorageInterface
      */
     public function searchPaymentById(int $id): ?PSCBPayment
     {
-        $tableName = 'billing_pscb_payment';
-
-        $sql = 'SELECT ';
-        $sql .= '* ';
-        $sql .= 'FROM ' . $tableName . ' ';
-        $sql .= 'WHERE id_payment = "%d" ';
-        $sql = sprintf($sql, $id);
-        $row = $this->getRow($sql);
-        if ($row) {
-            return new PSCBPayment();
-        }
-
         return null;
     }
 
