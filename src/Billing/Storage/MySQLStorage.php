@@ -672,7 +672,7 @@ class MySQLStorage implements StorageInterface
         foreach ($rows as $row) {
             $id = intval($row['id_payment']);
             $account = intval($row['id_account']);
-            $amount = intval($row['payment_amount']);
+            $amount = floatval($row['payment_amount']);
             $comment = strval($row['payment_comment']);
             $type = strval($row['payment_type']);
             $status = intval($row['payment_status']);

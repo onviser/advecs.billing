@@ -112,13 +112,13 @@ try {
 
     // проверка платежей и уведомления
     $hAccount1 = $hBilling->getAccountUser($user1);
-    $amount1 = 10;
+    $amount1 = 3.14;
     $account1 = $hAccount1->getId();
     $hPayment1 = new PSCBPayment($account1, $amount1, 'платеж 1');
     $hBilling->addPSCBPayment($hPayment1);
 
     $hAccount2 = $hBilling->getAccountUser($user2);
-    $amount2 = 20;
+    $amount2 = 3.28;
     $account2 = $hAccount2->getId();
     $hPayment2 = new PSCBPayment($account2, $amount2, 'платеж 2');
     $hBilling->addPSCBPayment($hPayment2);
