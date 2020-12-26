@@ -12,6 +12,7 @@ use Advecs\Billing\PSCB\PSCBNotify;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Search\SearchAccount;
+use Advecs\Billing\Search\SearchPayment;
 use mysqli;
 use mysqli_result;
 
@@ -283,11 +284,11 @@ class MySQLStorage implements StorageInterface
             $sql .= 'WHERE ' . implode(' AND ', $where);
         }
         $row = $this->getRow($sql);
-        $amountPosting = intval($row['cnt']);
-        if ($amountPosting === 0) {
+        $total = intval($row['cnt']);
+        if ($total === 0) {
             return [];
         }
-        $hSearch->setAmountPosting($amountPosting);
+        $hSearch->setTotal($total);
 
         $sql = 'SELECT ';
         $sql .= '* ';
@@ -507,7 +508,22 @@ class MySQLStorage implements StorageInterface
      */
     public function updatePSCBPayment(PSCBPayment $hPSCBPayment): bool
     {
-        return false;
+        $tableName = 'billing_pscb_payment';
+
+        $sql = 'UPDATE ' . $tableName . ' ';
+        $sql .= 'SET payment_type = "%s", ';
+        $sql .= 'payment_status = "%d", ';
+        $sql .= 'payment_update = "%d", ';
+        $sql .= 'payment_json = "%s" ';
+        $sql .= 'WHERE id_payment = "%d" ';
+        $sql = sprintf($sql,
+            $hPSCBPayment->getType(),
+            $hPSCBPayment->getStatus(),
+            time(),
+            $hPSCBPayment->getJSON()
+        );
+
+        return $this->update($sql);
     }
 
     /**
@@ -561,11 +577,11 @@ class MySQLStorage implements StorageInterface
             $sql .= 'WHERE ' . implode(' AND ', $where);
         }
         $row = $this->getRow($sql);
-        $amount = intval($row['cnt']);
-        if ($amount === 0) {
+        $total = intval($row['cnt']);
+        if ($total === 0) {
             return [];
         }
-        $hSearch->setAmount($amount);
+        $hSearch->setTotal($total);
 
         $sql = 'SELECT ';
         $sql .= 'id_type, ';
@@ -598,11 +614,78 @@ class MySQLStorage implements StorageInterface
     }
 
     /**
+     * @param SearchPayment $hSearch
+     * @return Account[]
+     * @throws MySQLException
+     */
+    public function searchPayment(SearchPayment $hSearch): array
+    {
+        $tableName = 'billing_pscb_payment';
+
+        $where = [];
+        if ($hSearch->getId() > 0) {
+            $where[] = 'id_payment = "' . intval($hSearch->getId()) . '"';
+        }
+        if ($hSearch->getAccount() > 0) {
+            $where[] = 'id_account = "' . intval($hSearch->getAccount()) . '"';
+        }
+        if ($hSearch->getPaymentStatus() > 0) {
+            $where[] = 'payment_status = "' . intval($hSearch->getPaymentStatus()) . '"';
+        }
+
+        $sql = 'SELECT ';
+        $sql .= 'COUNT(id_account) AS cnt ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        if (count($where)) {
+            $sql .= 'WHERE ' . implode(' AND ', $where);
+        }
+        $row = $this->getRow($sql);
+        $total = intval($row['cnt']);
+        if ($total === 0) {
+            return [];
+        }
+        $hSearch->setTotal($total);
+
+        $sql = 'SELECT ';
+        $sql .= 'id_account, ';
+        $sql .= 'payment_amount, ';
+        $sql .= 'payment_comment, ';
+        $sql .= 'payment_type, ';
+        $sql .= 'payment_status, ';
+        $sql .= 'payment_add, ';
+        $sql .= 'payment_update, ';
+        $sql .= 'payment_json, ';
+        $sql .= 'id_payment ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        if (count($where)) {
+            $sql .= 'WHERE ' . implode(' AND ', $where);
+        }
+        $sql .= 'ORDER BY id_account ASC ';
+        $sql .= 'LIMIT ' . $hSearch->getOffset() . ', ' . $hSearch->getLimit();
+        $rows = $this->getRows($sql);
+        if (!$rows) {
+            return [];
+        }
+    }
+
+    /**
      * @param int $id
      * @return PSCBPayment|null
      */
     public function searchPaymentById(int $id): ?PSCBPayment
     {
+        $tableName = 'billing_pscb_payment';
+
+        $sql = 'SELECT ';
+        $sql .= '* ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        $sql .= 'WHERE id_payment = "%d" ';
+        $sql = sprintf($sql, $id);
+        $row = $this->getRow($sql);
+        if ($row) {
+            return new PSCBPayment();
+        }
+
         return null;
     }
 

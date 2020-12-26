@@ -31,7 +31,6 @@ try {
     $hBilling->addUserRuble($user1, 1000.0, 'пополнение счета пользователя');
     $hBilling->addUserBonus($user1, 100.0, 'пополнение бонусного счета пользователя');
 
-    /*
     $user2 = 2;
     $hBilling->addUserRuble($user2, 2.0, 'пополнение счета пользователя');
     $hBilling->addUserBonus($user2, 4.0, 'пополнение бонусного счета пользователя');
@@ -81,14 +80,14 @@ try {
     foreach ($postings as $hPosting) {
         echo " - проводка {$hPosting->getId()}: {$hPosting->getAmount()} бон., {$hPosting->getComment()}" . PHP_EOL;
     }
-    echo " - кол-во проводок: {$hSearch->getAmountPosting()}" . PHP_EOL;
+    echo " - кол-во проводок: {$hSearch->getTotal()}" . PHP_EOL;
 
     $hSearchAccount = new SearchAccount();
     $account = $hBilling->searchAccount($hSearchAccount);
     foreach ($account as $hAccount) {
         echo " - аккаунт {$hAccount->getId()}: {$hAccount->getBalance()} руб., {$hAccount->getBalanceBonus()} бон." . PHP_EOL;
     }
-    echo " - кол-во аккаунтов: {$hSearchAccount->getAmount()}" . PHP_EOL;
+    echo " - кол-во аккаунтов: {$hSearchAccount->getTotal()}" . PHP_EOL;
 
     echo "баланс пользователя в рублях [{$user1}]: " . $hBilling->getUserBalanceRuble($user1) . PHP_EOL;
     echo "баланс пользователя в бонусах [{$user1}]: " . $hBilling->getUserBalanceBonus($user1) . PHP_EOL;
@@ -108,7 +107,6 @@ try {
     $hAccount = $hBilling->getAccountFirm($firm1);
     $firm = $hBilling->getIdFirm($hAccount->getId());
     echo "счет [{$hAccount->getId()}, {$hAccount->getIdExternal()}]: фирма: " . $firm . PHP_EOL;
-    */
 }
 catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;

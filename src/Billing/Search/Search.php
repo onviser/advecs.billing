@@ -3,16 +3,13 @@
 namespace Advecs\Billing\Search;
 
 /**
+ * Поик проводок
  * Class Search
  * @package Advecs\Billing\Search
  */
-class Search
+class Search extends AbstractSearch
 {
-    protected $account = 0;
     protected $accountType = 0;
-
-    protected $offset = 0;
-    protected $limit = 100;
 
     protected $timeFrom = 0;
     protected $timeTo = 0;
@@ -21,8 +18,6 @@ class Search
     protected $amountTo = 0.0;
 
     protected $comment = '';
-
-    protected $amountPosting = 0;
 
     /**
      * Search constructor.
@@ -33,22 +28,6 @@ class Search
     {
         $this->account = $account;
         $this->accountType = $accountType;
-    }
-
-    /**
-     * @param int $account
-     * @return $this
-     */
-    public function setAccount(int $account): self
-    {
-        $this->account = $account;
-        return $this;
-    }
-
-    /** @return int */
-    public function getAccount(): int
-    {
-        return $this->account;
     }
 
     /**
@@ -65,30 +44,6 @@ class Search
     public function getAccountType(): int
     {
         return $this->accountType;
-    }
-
-    /**
-     * @param int $offset
-     * @param int $limit
-     * @return $this
-     */
-    public function setLimit(int $offset = 1, int $limit = 100): self
-    {
-        $this->offset = $offset;
-        $this->limit = $limit;
-        return $this;
-    }
-
-    /** @return int */
-    public function getOffset(): int
-    {
-        return $this->offset;
-    }
-
-    /** @return int */
-    public function getLimit(): int
-    {
-        return $this->limit;
     }
 
     /**
@@ -157,21 +112,5 @@ class Search
     public function getComment(): string
     {
         return $this->comment;
-    }
-
-    /**
-     * @param int $amountPosting
-     * @return $this
-     */
-    public function setAmountPosting(int $amountPosting): self
-    {
-        $this->amountPosting = $amountPosting;
-        return $this;
-    }
-
-    /** @return int */
-    public function getAmountPosting(): int
-    {
-        return $this->amountPosting;
     }
 }

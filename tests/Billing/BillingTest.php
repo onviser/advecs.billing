@@ -178,7 +178,7 @@ class BillingTest extends TestCase
             ->setAmount(200, 500);
         $posting = $hBilling->getPosting($hSearch);
         $this->assertCount(3, $posting);
-        $this->assertEquals(3, $hSearch->getAmountPosting());
+        $this->assertEquals(3, $hSearch->getTotal());
 
         $posting = $hBilling->getPosting(
             (new Search())
