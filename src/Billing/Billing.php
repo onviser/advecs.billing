@@ -318,7 +318,7 @@ class Billing implements BillingInterface
 
     /**
      * @param PSCBNotify $hPSCBNotify
-     * @return array
+     * @return PSCBOrder[]
      */
     public function processingPSCBNotify(PSCBNotify $hPSCBNotify): array
     {

@@ -59,7 +59,7 @@ class PSCBNotify
     /** @return PSCBOrder[] */
     public function getOrders(): array
     {
-        $jsonAsString = base64_encode($this->json);
+        $jsonAsString = base64_decode($this->json);
         $json = json_decode($jsonAsString, true);
         if (!isset($json['payments'])) {
             return [];
