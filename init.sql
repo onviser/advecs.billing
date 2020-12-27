@@ -75,7 +75,7 @@ CREATE TABLE billing_pscb_payment
     payment_update  INTEGER UNSIGNED DEFAULT 0,
     payment_json    TEXT
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 20
+  AUTO_INCREMENT = 30
   DEFAULT CHARSET = utf8 COMMENT 'ПСКБ, платежи';
 ALTER TABLE billing_pscb_payment
     ADD INDEX (id_account);
@@ -94,5 +94,5 @@ CREATE TABLE billing_pscb_notify
     notify_status TINYINT UNSIGNED DEFAULT 1,
     notify_add    INTEGER UNSIGNED DEFAULT 0
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 20
+  AUTO_INCREMENT = 30
   DEFAULT CHARSET = utf8 COMMENT 'ПСКБ, уведомления от банка';
