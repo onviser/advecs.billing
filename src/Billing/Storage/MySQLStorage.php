@@ -673,7 +673,7 @@ class MySQLStorage implements StorageInterface
         if (count($where)) {
             $sql .= 'WHERE ' . implode(' AND ', $where);
         }
-        $sql .= 'ORDER BY id DESC ';
+        $sql .= 'ORDER BY id_payment DESC ';
         $sql .= 'LIMIT ' . $hSearch->getOffset() . ', ' . $hSearch->getLimit();
         $rows = $this->getRows($sql);
         if (!$rows) {

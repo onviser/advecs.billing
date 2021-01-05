@@ -8,6 +8,7 @@ use Advecs\Billing\Exception\MySQLException;
 use Advecs\Billing\PSCB\PSCBNotify;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
+use Advecs\Billing\Search\SearchPayment;
 use Advecs\Billing\Storage\MySQLStorage;
 use Advecs\Billing\Search\SearchAccount;
 
@@ -175,6 +176,13 @@ try {
     $json = base64_encode($json);
     $hNotify = new PSCBNotify($raw, $json);
     $orders = $hBilling->processingPSCBNotify($hNotify);
+
+    $hSearchPayment = new SearchPayment();
+    $payment = $hBilling->searchPayment($hSearchPayment);
+    foreach ($payment as $hPayment) {
+        echo " - платеж {$hPayment->getId()}: {$hPayment->getAmount()} руб." . PHP_EOL;
+    }
+    echo " - кол-во платежей: {$hSearchPayment->getTotal()}" . PHP_EOL;
 }
 catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;
