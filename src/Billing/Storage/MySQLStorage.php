@@ -633,6 +633,18 @@ class MySQLStorage implements StorageInterface
         if ($hSearch->getPaymentStatus() > 0) {
             $where[] = 'payment_status = "' . intval($hSearch->getPaymentStatus()) . '"';
         }
+        if ($hSearch->getAmountFrom() > 0) {
+            $where[] = 'ABS(payment_amount) >= "' . floatval($hSearch->getAmountFrom()) . '"';
+        }
+        if ($hSearch->getAmountTo() > 0) {
+            $where[] = 'ABS(payment_amount) <= "' . floatval($hSearch->getAmountTo()) . '"';
+        }
+        if ($hSearch->getTimeFrom() > 0) {
+            $where[] = 'payment_add >= "' . intval($hSearch->getTimeFrom()) . '"';
+        }
+        if ($hSearch->getTimeTo() > 0) {
+            $where[] = 'payment_add <= "' . intval($hSearch->getTimeTo()) . '"';
+        }
 
         $sql = 'SELECT ';
         $sql .= 'COUNT(id_account) AS cnt ';
@@ -661,7 +673,7 @@ class MySQLStorage implements StorageInterface
         if (count($where)) {
             $sql .= 'WHERE ' . implode(' AND ', $where);
         }
-        $sql .= 'ORDER BY id_account ASC ';
+        $sql .= 'ORDER BY id DESC ';
         $sql .= 'LIMIT ' . $hSearch->getOffset() . ', ' . $hSearch->getLimit();
         $rows = $this->getRows($sql);
         if (!$rows) {
