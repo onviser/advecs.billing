@@ -10,6 +10,7 @@ use Advecs\Billing\PSCB\PSCBNotify;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Search\SearchAccount;
+use Advecs\Billing\Search\SearchPayment;
 
 /**
  * Class MemoryStorage
@@ -274,6 +275,15 @@ class MemoryStorage implements StorageInterface
     public function searchAccount(SearchAccount $hSearch): array
     {
         return $this->account;
+    }
+
+    /**
+     * @param SearchPayment $hSearch
+     * @return PSCBPayment[]
+     */
+    public function searchPayment(SearchPayment $hSearch): array
+    {
+        return $this->payment;
     }
 
     /**

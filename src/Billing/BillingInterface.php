@@ -8,6 +8,7 @@ use Advecs\Billing\PSCB\PSCBNotify;
 use Advecs\Billing\PSCB\PSCBPayment;
 use Advecs\Billing\Search\Search;
 use Advecs\Billing\Search\SearchAccount;
+use Advecs\Billing\Search\SearchPayment;
 use Advecs\Billing\Storage\StorageInterface;
 
 /**
@@ -190,4 +191,10 @@ interface BillingInterface
      * @return Account[]
      */
     public function searchAccount(SearchAccount $hSearch): array;
+
+    /**
+     * @param SearchPayment $hSearch
+     * @return PSCBPayment[]
+     */
+    public function searchPayment(SearchPayment $hSearch): array;
 }
