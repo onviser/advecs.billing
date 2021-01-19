@@ -330,8 +330,8 @@ class Billing implements BillingInterface
         $orders = $hPSCBNotify->getOrders();
         foreach ($orders as $hOrder) {
 
-            // по умолчанию считаем, что платеж отклонен
-            $hOrder->setAction(PSCBOrder::STATUS_REJECT);
+            // по умолчанию считаем, что платеж принят
+            $hOrder->setAction(PSCBOrder::STATUS_CONFIRM);
 
             $hPayment = $this->hStorage->searchPaymentById($hOrder->getId());
             if (!$hPayment) {
@@ -343,20 +343,21 @@ class Billing implements BillingInterface
 
             // платеж просрочен
             if ($hOrder->getState() === 'exp') {
-                $hOrder->setAction(PSCBOrder::STATUS_REJECT);
                 $hOrder->setError('платеж просрочен, состояние: ' . $hOrder->getState());
                 continue;
             }
 
             // платеж еще не обработан
             if ($hOrder->getState() !== 'end') {
-                $hOrder->setError('платеж не обработан, состояние: ' . $hOrder->getState());
+                $hOrder->setError('платеж не завершен, состояние: ' . $hOrder->getState());
                 continue;
             }
 
             // платеж уже обработан
             if ($hPayment->getStatus() === PSCBPayment::STATUS_END) {
-                $hOrder->setError('платеж уже обработан');
+                $hOrder
+                    ->setAction(PSCBOrder::STATUS_REJECT)
+                    ->setError('платеж уже обработан');
                 continue;
             }
 
@@ -376,7 +377,9 @@ class Billing implements BillingInterface
 
             // ошибка пополнения счета
             if (!$this->hStorage->updatePSCBPayment($hPayment)) {
-                $hOrder->setError('не удалось обновить платеж ' . $hPayment->getId());
+                $hOrder
+                    ->setAction(PSCBOrder::STATUS_REJECT)
+                    ->setError('не удалось обновить платеж ' . $hPayment->getId());
                 continue;
             }
 
