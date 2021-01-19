@@ -337,6 +337,13 @@ class Billing implements BillingInterface
                 continue;
             }
 
+            // платеж просрочен
+            if ($hOrder->getState() === 'exp') {
+                $hOrder->setAction(PSCBOrder::STATUS_REJECT);
+                $hOrder->setError('платеж просрочен, состояние: ' . $hOrder->getState());
+                continue;
+            }
+
             // платеж еще не обработан
             if ($hOrder->getState() !== 'end') {
                 $hOrder->setError('платеж не обработан, состояние: ' . $hOrder->getState());
