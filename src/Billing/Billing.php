@@ -329,6 +329,10 @@ class Billing implements BillingInterface
 
         $orders = $hPSCBNotify->getOrders();
         foreach ($orders as $hOrder) {
+
+            // по умолчанию считаем, что платеж отклонен
+            $hOrder->setAction(PSCBOrder::STATUS_REJECT);
+
             $hPayment = $this->hStorage->searchPaymentById($hOrder->getId());
             if (!$hPayment) {
                 $hOrder
