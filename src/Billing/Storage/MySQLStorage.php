@@ -340,6 +340,9 @@ class MySQLStorage implements StorageInterface
                     $balance = floatval($row['account_balance']);
                     $balanceBonus = floatval($row['account_balance_bonus']);
                     $account[$id] = ($type === Account::TYPE_FIRM) ? new Firm($id, $balance, $balanceBonus) : new User($id, $balance, $balanceBonus);
+
+                    $external = intval($row['id_external']);
+                    $account[$id]->setIdExternal($external);
                 }
             }
         }
