@@ -2,6 +2,8 @@
 
 namespace Advecs\Billing\PSCB;
 
+use Advecs\Billing\Account\Account;
+
 /**
  * Class PSCBPayment
  * @package Advecs\Billing\PSCB
@@ -40,6 +42,9 @@ class PSCBPayment
 
     /** @var int */
     protected $timeUpdate = 0;
+
+    /** @var Account */
+    protected $hAccount;
 
     /**
      * PSCBPayment constructor.
@@ -168,5 +173,21 @@ class PSCBPayment
     public function getTimeUpdate(): int
     {
         return $this->timeUpdate;
+    }
+
+    /**
+     * @param Account $hAccount
+     * @return $this
+     */
+    public function setAccountObject(Account $hAccount): self
+    {
+        $this->hAccount = $hAccount;
+        return $this;
+    }
+
+    /** @return Account|null */
+    public function getAccountObject(): ?Account
+    {
+        return $this->hAccount;
     }
 }

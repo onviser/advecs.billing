@@ -72,8 +72,7 @@ class MySQLStorage implements StorageInterface
             $account = intval($row['id_account']);
             $balance = floatval($row['account_balance']);
             $balance_bonus = floatval($row['account_balance_bonus']);
-        }
-        else {
+        } else {
 
             if ($idExternal === 0) {
                 throw new BillingException('не указан внутренний идентификатор пользователя');
@@ -622,6 +621,7 @@ class MySQLStorage implements StorageInterface
     public function searchPayment(SearchPayment $hSearch): array
     {
         $tableName = 'billing_pscb_payment';
+        $tableNameAccount = 'billing_account';
 
         $where = [];
         if ($hSearch->getId() > 0) {
@@ -660,7 +660,11 @@ class MySQLStorage implements StorageInterface
         $hSearch->setTotal($total);
 
         $sql = 'SELECT ';
-        $sql .= 'id_account, ';
+        $sql .= $tableNameAccount . '.id_type, ';
+        $sql .= $tableNameAccount . '.id_external, ';
+        $sql .= $tableNameAccount . '.account_balance, ';
+        $sql .= $tableNameAccount . '.account_balance_bonus, ';
+        $sql .= $tableName . '.id_account, ';
         $sql .= 'payment_amount, ';
         $sql .= 'payment_comment, ';
         $sql .= 'payment_type, ';
@@ -670,6 +674,7 @@ class MySQLStorage implements StorageInterface
         $sql .= 'payment_json, ';
         $sql .= 'id_payment ';
         $sql .= 'FROM ' . $tableName . ' ';
+        $sql .= 'LEFT JOIN ' . $tableNameAccount . ' ON ' . $tableNameAccount . '.id_account = ' . $tableName . '.id_account ';
         if (count($where)) {
             $sql .= 'WHERE ' . implode(' AND ', $where);
         }
@@ -698,6 +703,16 @@ class MySQLStorage implements StorageInterface
                 ->setStatus($status)
                 ->setJSON($json)
                 ->setTime($add, $update);
+
+            // объединяем с аккаунтом
+            $balance = floatval($row['account_balance']);
+            $balanceBonus = floatval($row['account_balance_bonus']);
+            $type = intval($row['id_type']);
+            $external = intval($row['id_external']);
+
+            $hAccount = ($type === Account::TYPE_FIRM) ? new Firm($account, $balance, $balanceBonus) : new User($account, $balance, $balanceBonus);
+            $hAccount->setIdExternal($external);
+            $payment[$id]->setAccountObject($hAccount);
         }
 
         return $payment;
@@ -782,8 +797,7 @@ class MySQLStorage implements StorageInterface
             $affectedRows = mysqli_affected_rows($this->mysqli);
             if ($affectedRows > 0) {
                 return true;
-            }
-            elseif ($affectedRows == 0 && $errorNumber == 0) {
+            } elseif ($affectedRows == 0 && $errorNumber == 0) {
                 return true;
             }
         }
