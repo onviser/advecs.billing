@@ -628,7 +628,7 @@ class MySQLStorage implements StorageInterface
             $where[] = 'id_payment = "' . intval($hSearch->getId()) . '"';
         }
         if ($hSearch->getAccount() > 0) {
-            $where[] = 'id_account = "' . intval($hSearch->getAccount()) . '"';
+            $where[] = $tableName . '.id_account = "' . intval($hSearch->getAccount()) . '"';
         }
         if ($hSearch->getPaymentStatus() > 0) {
             $where[] = 'payment_status = "' . intval($hSearch->getPaymentStatus()) . '"';
