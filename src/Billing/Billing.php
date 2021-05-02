@@ -229,6 +229,33 @@ class Billing implements BillingInterface
     }
 
     /**
+     * Перевод бонусов от пользователя фирме
+     * @param int $user
+     * @param int $firm
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     * @throws Exception\BillingException
+     */
+    public function transferUserFirmBonus(int $user, int $firm, float $amount, string $comment): bool
+    {
+        $hFrom = $this->getAccountUser($user);
+        $hTo = $this->getAccountFirm($firm);
+        $hPosting = (new Posting($amount, $comment))
+            ->setFrom($hFrom)
+            ->setTo($hTo);
+
+        // недостаточно бонусов
+        if ($hFrom->getBalanceBonus() < $amount) {
+            throw (new NotEnoughException('недостаточно бонусов'))
+                ->setAccount($hFrom)
+                ->setPosting($hPosting);
+        }
+
+        return $this->hStorage->transferRuble($hPosting);
+    }
+
+    /**
      * Перевод средств от фирмы пользователю
      * @param int $firm
      * @param int $user

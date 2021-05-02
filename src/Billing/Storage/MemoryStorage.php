@@ -126,6 +126,26 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
+     * @param Posting $hPostingCredit
+     * @return bool
+     */
+    public function transferBonus(Posting $hPostingCredit): bool
+    {
+        // зачисление
+        $hTo = $hPostingCredit->getTo();
+        $hTo->changeBalanceBonus($hPostingCredit->getAmount());
+        $this->postingBonus[$hTo->getType()][$hTo->getId()][] = $hPostingCredit;
+
+        // списание
+        $hPostingDebit = new Posting(-1 * $hPostingCredit->getAmount(), $hPostingCredit->getComment());
+        $hFrom = $hPostingCredit->getFrom();
+        $hFrom->changeBalanceBonus($hPostingDebit->getAmount());
+        $this->postingBonus[$hFrom->getType()][$hFrom->getId()][] = $hPostingDebit;
+
+        return true;
+    }
+
+    /**
      * @param Search $hSearch
      * @return Posting[]
      */

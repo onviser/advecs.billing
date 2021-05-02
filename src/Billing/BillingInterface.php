@@ -125,6 +125,16 @@ interface BillingInterface
     public function transferUserFirmRuble(int $user, int $firm, float $amount, string $comment): bool;
 
     /**
+     * Перевод бонусов от пользователя фирме
+     * @param int $user
+     * @param int $firm
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function transferUserFirmBonus(int $user, int $firm, float $amount, string $comment): bool;
+
+    /**
      * Перевод средств от фирмы пользователю
      * @param int $firm
      * @param int $user

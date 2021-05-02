@@ -54,6 +54,12 @@ interface StorageInterface
     public function transferRuble(Posting $hPostingCredit): bool;
 
     /**
+     * @param Posting $hPostingCredit
+     * @return bool
+     */
+    public function transferBonus(Posting $hPostingCredit): bool;
+
+    /**
      * @param Search $hSearch
      * @return Posting[]
      */

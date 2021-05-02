@@ -226,6 +226,44 @@ class MySQLStorage implements StorageInterface
     }
 
     /**
+     * @param Posting $hPostingCredit
+     * @return bool
+     * @throws MySQLException
+     */
+    public function transferBonus(Posting $hPostingCredit): bool
+    {
+        try {
+            $this->query('SET AUTOCOMMIT = 0');
+
+            $hFrom = $hPostingCredit->getFrom();
+            $hTo = $hPostingCredit->getTo();
+
+            // списание
+            $hPostingDebit = (new Posting(-1 * $hPostingCredit->getAmount(), $hPostingCredit->getComment()))
+                ->setFrom($hFrom)
+                ->setTo($hTo);
+            $this->savePostingBonus($hFrom, $hPostingDebit);
+            $hFrom->changeBalanceBonus($hPostingDebit->getAmount());
+            $this->saveBalance($hFrom);
+
+            // зачисление
+            $this->savePostingBonus($hTo, $hPostingCredit);
+            $hTo->changeBalanceBonus($hPostingCredit->getAmount());
+            $this->saveBalance($hTo);
+
+            $this->query('COMMIT');
+            $this->query('SET AUTOCOMMIT = 1');
+
+        }
+        catch (MySQLException $hException) {
+            $this->query('ROLLBACK');
+            $this->query('SET AUTOCOMMIT = 1');
+            throw $hException;
+        }
+        return true;
+    }
+
+    /**
      * @param Search $hSearch
      * @return Posting[]
      * @throws MySQLException
