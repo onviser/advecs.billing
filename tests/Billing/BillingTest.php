@@ -20,30 +20,6 @@ class BillingTest extends TestCase
     const ID_EXTERNAL_2 = 222;
 
     /** @return bool */
-    public function testGetIdUser(): bool
-    {
-        $hBilling = $this->getBilling();
-
-        // пользователь 1
-        $hBilling->addUserRuble(self::ID_USER_1, 3.14, 'пополнение счета');
-        $hBilling->addUserRuble(self::ID_USER_1, 6.28, 'еще одно пополнение счета');
-        $hBilling->addUserBonus(self::ID_USER_1, 0.31, 'зачисление бонусов');
-
-        // пользователь 2
-        $hBilling->addUserRuble(self::ID_USER_2, 1.11, 'пополнение счета');
-        $hBilling->addUserRuble(self::ID_USER_2, 2.22, 'пополнение счета');
-
-        $hAccount1 = $hBilling->getAccountUser(self::ID_USER_1);
-        $hAccount1->setIdExternal(self::ID_EXTERNAL_1);
-        //$this->assertEquals(self::ID_USER_1, $hBilling->getIdUser(self::ID_EXTERNAL_1));
-
-        $hBilling->getAccountUser(self::ID_USER_2)->setIdExternal(self::ID_EXTERNAL_2);
-        //$this->assertEquals(self::ID_USER_2, $hBilling->getIdUser(self::ID_EXTERNAL_2));
-
-        return true;
-    }
-
-    /** @return bool */
     public function testUserAdd(): bool
     {
         $hBilling = $this->getBilling();
@@ -63,7 +39,10 @@ class BillingTest extends TestCase
         return true;
     }
 
-    /** @return bool */
+    /**
+     * @return bool
+     * @throws BillingException
+     */
     public function testUserTransfer(): bool
     {
         $hBilling = $this->getBilling();
@@ -101,7 +80,10 @@ class BillingTest extends TestCase
         return true;
     }
 
-    /** @return bool */
+    /**
+     * @return bool
+     * @throws BillingException
+     */
     public function testFirmTransfer(): bool
     {
         $hBilling = $this->getBilling();
@@ -119,7 +101,10 @@ class BillingTest extends TestCase
         return true;
     }
 
-    /** @return bool */
+    /**
+     * @return bool
+     * @throws BillingException
+     */
     public function testUserFirmTransfer(): bool
     {
         $hBilling = $this->getBilling();
@@ -133,7 +118,25 @@ class BillingTest extends TestCase
         return true;
     }
 
-    /** @return bool */
+    /**
+     * @return bool
+     * @throws BillingException
+     */
+    public function testUserFirmTransferBonus(): bool
+    {
+        $hBilling = $this->getBilling();
+        $hBilling->addUserBonus(self::ID_USER_1, 1000);
+        $hBilling->addFirmBonus(self::ID_FIRM_1, 100);
+        $hBilling->transferUserFirmBonus(self::ID_USER_1, self::ID_FIRM_1, 600, 'перевод бонусов от пользователя фирме');
+        $this->assertEquals(400, $hBilling->getUserBalanceBonus(self::ID_USER_1));
+        $this->assertEquals(700, $hBilling->getFirmBalanceBonus(self::ID_FIRM_1));
+        return true;
+    }
+
+    /**
+     * @return bool
+     * @throws BillingException
+     */
     public function testFirmUserTransfer(): bool
     {
         $hBilling = $this->getBilling();

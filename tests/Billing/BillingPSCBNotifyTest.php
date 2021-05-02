@@ -13,21 +13,23 @@ class BillingPSCBNotifyTest extends TestCase
 {
     const ID_ACCOUNT_1 = 1;
     const ID_ACCOUNT_2 = 2;
-    const ID_ACCOUNT_3 = 2;
+    const ID_ACCOUNT_3 = 3;
 
     /** @return bool */
     public function testNotify(): bool
     {
         $hBilling = $this->getBilling();
 
-        $hBilling->addUserRuble(1, 1);
-        $hBilling->addUserRuble(2, 2);
-        $hBilling->addUserRuble(3, 3);
+        $hBilling->addUserRuble(self::ID_ACCOUNT_1, 1);
+        $hBilling->addUserRuble(self::ID_ACCOUNT_2, 2);
+        $hBilling->addUserRuble(self::ID_ACCOUNT_3, 3);
 
+        // зачисление платежей ПСКБ
         $hBilling->addPSCBPayment((new PSCBPayment(self::ID_ACCOUNT_1, 10))->setId(1));
         $hBilling->addPSCBPayment((new PSCBPayment(self::ID_ACCOUNT_2, 20))->setId(2));
         $hBilling->addPSCBPayment((new PSCBPayment(self::ID_ACCOUNT_1, 30))->setId(3));
         $hBilling->addPSCBPayment((new PSCBPayment(self::ID_ACCOUNT_2, 40))->setId(4));
+        $hBilling->addPSCBPayment((new PSCBPayment(self::ID_ACCOUNT_3, 50))->setId(5));
 
         $raw = base64_encode('raw');
         $json = base64_encode($this->getJSON_1());
@@ -48,12 +50,13 @@ class BillingPSCBNotifyTest extends TestCase
                     break;
             }
         }
-        $this->assertEquals(5, $amount);
-        $this->assertEquals(3, $amountConfirm);
+        $this->assertEquals(6, $amount);
+        $this->assertEquals(5, $amountConfirm);
         $this->assertEquals(1, $amountReject);
 
         $this->assertEquals(11, $hBilling->getAccountUser(self::ID_ACCOUNT_1)->getBalance());
         $this->assertEquals(62, $hBilling->getAccountUser(self::ID_ACCOUNT_2)->getBalance());
+        $this->assertEquals(53, $hBilling->getAccountUser(self::ID_ACCOUNT_3)->getBalance());
 
         return true;
     }
@@ -128,6 +131,22 @@ class BillingPSCBNotifyTest extends TestCase
       "orderId": "5",
       "showOrderId": "5",
       "paymentId": "229394060",
+      "account": "' . self::ID_ACCOUNT_3 . '",
+      "amount": 50,
+      "state": "end",
+      "marketPlace": 310417760,
+      "paymentMethod": "ac",
+      "stateDate": "2020-12-24T22:39:01.269+03:00",
+      "lastError": {
+        "code": "0",
+        "subCode": "00",
+        "description": "Платеж завершен"
+      }
+    },
+    {
+      "orderId": "6",
+      "showOrderId": "6",
+      "paymentId": "229394061",
       "account": "' . self::ID_ACCOUNT_3 . '",
       "amount": 50,
       "state": "end",

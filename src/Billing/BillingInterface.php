@@ -95,6 +95,13 @@ interface BillingInterface
     public function getFirmBalanceRuble(int $id): float;
 
     /**
+     * Баланс фирмы
+     * @param int $id
+     * @return float
+     */
+    public function getFirmBalanceBonus(int $id): float;
+
+    /**
      * Пополнение счета фирмы
      * @param int $id
      * @param float $amount
@@ -102,6 +109,15 @@ interface BillingInterface
      * @return bool
      */
     public function addFirmRuble(int $id, float $amount, string $comment = 'пополнение счета фирмы'): bool;
+
+    /**
+     * Пополнение бонусного счета пользователя
+     * @param int $id
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function addFirmBonus(int $id, float $amount, string $comment = 'зачисление бонусов'): bool;
 
     /**
      * Перевод средств от фирмы к фирме

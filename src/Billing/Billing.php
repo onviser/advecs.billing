@@ -160,6 +160,17 @@ class Billing implements BillingInterface
     }
 
     /**
+     * Баланс фирмы
+     * @param int $id
+     * @return float
+     */
+    public function getFirmBalanceBonus(int $id): float
+    {
+        $hFirm = $this->getAccountFirm($id);
+        return $hFirm ? $hFirm->getBalanceBonus() : 0.0;
+    }
+
+    /**
      * Пополнение счета фирмы
      * @param int $id
      * @param float $amount
@@ -172,6 +183,21 @@ class Billing implements BillingInterface
         $hPosting = (new Posting($amount, $comment))
             ->setTo($hFirm);
         return $this->hStorage->addRuble($hPosting);
+    }
+
+    /**
+     * Пополнение бонусного счета пользователя
+     * @param int $id
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function addFirmBonus(int $id, float $amount, string $comment = 'зачисление бонусов'): bool
+    {
+        $hUser = $this->getAccountFirm($id);
+        $hPosting = (new Posting($amount, $comment))
+            ->setTo($hUser);
+        return $this->hStorage->addBonus($hPosting);
     }
 
     /**
@@ -252,7 +278,7 @@ class Billing implements BillingInterface
                 ->setPosting($hPosting);
         }
 
-        return $this->hStorage->transferRuble($hPosting);
+        return $this->hStorage->transferBonus($hPosting);
     }
 
     /**
