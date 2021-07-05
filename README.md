@@ -27,4 +27,5 @@ $hBilling = (new Billing())
 https://github.com/onviser/advecs.billing/blob/master/bin/demo.php  
 
 ## 3. запуск тестов 
-./vendor/bin/phpunit  
+./vendor/bin/phpunit
+./vendor/bin/phpunit ./tests/Billing/BillingSystemTest.php  

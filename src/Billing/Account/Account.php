@@ -10,6 +10,7 @@ abstract class Account
 {
     const TYPE_USER = 1;
     const TYPE_FIRM = 2;
+    const TYPE_SYSTEM = 3; // BAC-120, системный счет
 
     /** @var int */
     protected $id = 0;

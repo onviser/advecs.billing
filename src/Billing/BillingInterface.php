@@ -161,6 +161,42 @@ interface BillingInterface
     public function transferFirmUserRuble(int $firm, int $user, float $amount, string $comment): bool;
 
     /**
+     * Пополнение аккаунта (пользователь, фирма, системный)
+     * @param Account $hAccount
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function addRuble(Account $hAccount, float $amount, string $comment = 'пополнение счета'): bool;
+
+    /**
+     * Зачисление бонусов (пользователь, фирма, системный)
+     * @param Account $hAccount
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function addBonus(Account $hAccount, float $amount, string $comment = 'зачисление бонусов'): bool;
+
+    /**
+     * @param Account $from
+     * @param Account $to
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function transferRuble(Account $from, Account $to, float $amount, string $comment): bool;
+
+    /**
+     * @param Account $from
+     * @param Account $to
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function transferBonus(Account $from, Account $to, float $amount, string $comment): bool;
+
+    /**
      * Список проводок
      * @param Search $hSearch
      * @return Posting[]

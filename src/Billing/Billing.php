@@ -477,4 +477,78 @@ class Billing implements BillingInterface
     {
         return $this->hStorage->searchPayment($hSearch);
     }
+
+    /**
+     * @param Account $hAccount
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function addRuble(Account $hAccount, float $amount, string $comment = 'пополнение счета'): bool
+    {
+        $hPosting = (new Posting($amount, $comment))
+            ->setTo($hAccount);
+        return $this->hStorage->addRuble($hPosting);
+    }
+
+    /**
+     * @param Account $hAccount
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     */
+    public function addBonus(Account $hAccount, float $amount, string $comment = 'зачисление бонусов'): bool
+    {
+        $hPosting = (new Posting($amount, $comment))
+            ->setTo($hAccount);
+        return $this->hStorage->addBonus($hPosting);
+    }
+
+    /**
+     * @param Account $from
+     * @param Account $to
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     * @throws Exception\BillingException
+     */
+    public function transferRuble(Account $from, Account $to, float $amount, string $comment): bool
+    {
+        $hPosting = (new Posting($amount, $comment))
+            ->setFrom($from)
+            ->setTo($to);
+
+        // недостаточно средств
+        if ($from->getBalance() < $amount) {
+            throw (new NotEnoughException('недостаточно средств'))
+                ->setAccount($from)
+                ->setPosting($hPosting);
+        }
+
+        return $this->hStorage->transferRuble($hPosting);
+    }
+
+    /**
+     * @param Account $from
+     * @param Account $to
+     * @param float $amount
+     * @param string $comment
+     * @return bool
+     * @throws Exception\BillingException
+     */
+    public function transferBonus(Account $from, Account $to, float $amount, string $comment): bool
+    {
+        $hPosting = (new Posting($amount, $comment))
+            ->setFrom($from)
+            ->setTo($to);
+
+        // недостаточно бонусов
+        if ($from->getBalanceBonus() < $amount) {
+            throw (new NotEnoughException('недостаточно бонусов'))
+                ->setAccount($from)
+                ->setPosting($hPosting);
+        }
+
+        return $this->hStorage->transferBonus($hPosting);
+    }
 }
