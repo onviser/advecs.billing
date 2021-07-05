@@ -3,8 +3,7 @@
 namespace Advecs\Billing\Storage;
 
 use Advecs\Billing\Account\Account;
-use Advecs\Billing\Account\Firm;
-use Advecs\Billing\Account\User;
+use Advecs\Billing\Account\FactoryAccount;
 use Advecs\Billing\Posting\Posting;
 use Advecs\Billing\PSCB\PSCBNotify;
 use Advecs\Billing\PSCB\PSCBPayment;
@@ -45,7 +44,7 @@ class MemoryStorage implements StorageInterface
                 return $this->account[$type][$id];
             }
         }
-        $this->account[$type][$id] = ($type === Account::TYPE_FIRM) ? new Firm($id) : new User($id);
+        $this->account[$type][$id] = FactoryAccount::getInstance($type, $id);
         return $this->account[$type][$id];
     }
 
@@ -73,6 +72,22 @@ class MemoryStorage implements StorageInterface
     {
         if (array_key_exists(Account::TYPE_FIRM, $this->account)) {
             foreach ($this->account[Account::TYPE_FIRM] as $id => $hAccount) {
+                if ($account === $id) {
+                    return $hAccount->getIdExternal();
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * @param int $account
+     * @return int
+     */
+    public function getIdSystem(int $account): int
+    {
+        if (array_key_exists(Account::TYPE_SYSTEM, $this->account)) {
+            foreach ($this->account[Account::TYPE_SYSTEM] as $id => $hAccount) {
                 if ($account === $id) {
                     return $hAccount->getIdExternal();
                 }

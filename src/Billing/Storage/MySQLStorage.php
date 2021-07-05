@@ -3,8 +3,7 @@
 namespace Advecs\Billing\Storage;
 
 use Advecs\Billing\Account\Account;
-use Advecs\Billing\Account\Firm;
-use Advecs\Billing\Account\User;
+use Advecs\Billing\Account\FactoryAccount;
 use Advecs\Billing\Exception\BillingException;
 use Advecs\Billing\Exception\MySQLException;
 use Advecs\Billing\Posting\Posting;
@@ -87,10 +86,12 @@ class MySQLStorage implements StorageInterface
             $balance_bonus = 0;
         }
 
-        if ($type === Account::TYPE_FIRM) {
-            return new Firm($account, $balance, $balance_bonus);
-        }
-        return new User($account, $balance, $balance_bonus);
+        return FactoryAccount::getInstance(
+            $type,
+            $account,
+            $balance,
+            $balance_bonus
+        );
     }
 
     /**
@@ -130,6 +131,28 @@ class MySQLStorage implements StorageInterface
         $sql .= 'WHERE id_account = "%d" ';
         $sql .= 'AND id_type = "%d" ';
         $sql = sprintf($sql, $account, Account::TYPE_FIRM);
+        $row = $this->getRow($sql);
+        if ($row) {
+            return intval($row['id_external']);
+        }
+        return 0;
+    }
+
+    /**
+     * @param int $account
+     * @return int
+     * @throws MySQLException
+     */
+    public function getIdSystem(int $account): int
+    {
+        $tableName = 'billing_account';
+
+        $sql = 'SELECT ';
+        $sql .= 'id_external ';
+        $sql .= 'FROM ' . $tableName . ' ';
+        $sql .= 'WHERE id_account = "%d" ';
+        $sql .= 'AND id_type = "%d" ';
+        $sql = sprintf($sql, $account, Account::TYPE_SYSTEM);
         $row = $this->getRow($sql);
         if ($row) {
             return intval($row['id_external']);
@@ -377,7 +400,13 @@ class MySQLStorage implements StorageInterface
                     $type = intval($row['id_type']);
                     $balance = floatval($row['account_balance']);
                     $balanceBonus = floatval($row['account_balance_bonus']);
-                    $account[$id] = ($type === Account::TYPE_FIRM) ? new Firm($id, $balance, $balanceBonus) : new User($id, $balance, $balanceBonus);
+
+                    $account[$id] = FactoryAccount::getInstance(
+                        $type,
+                        $id,
+                        $balance,
+                        $balanceBonus
+                    );
 
                     $external = intval($row['id_external']);
                     $account[$id]->setIdExternal($external);
@@ -647,7 +676,14 @@ class MySQLStorage implements StorageInterface
             $balance = floatval($row['account_balance']);
             $balanceBonus = floatval($row['account_balance_bonus']);
             $external = intval($row['id_external']);
-            $account[$id] = ($type === Account::TYPE_FIRM) ? new Firm($id, $balance, $balanceBonus) : new User($id, $balance, $balanceBonus);
+
+            $account[$id] = FactoryAccount::getInstance(
+                $type,
+                $id,
+                $balance,
+                $balanceBonus
+            );
+
             $account[$id]->setIdExternal($external);
         }
 
@@ -751,7 +787,13 @@ class MySQLStorage implements StorageInterface
             $type = intval($row['id_type']);
             $external = intval($row['id_external']);
 
-            $hAccount = ($type === Account::TYPE_FIRM) ? new Firm($account, $balance, $balanceBonus) : new User($account, $balance, $balanceBonus);
+            $hAccount = FactoryAccount::getInstance(
+                $type,
+                $account,
+                $balance,
+                $balanceBonus
+            );
+
             $hAccount->setIdExternal($external);
             $payment[$id]->setAccountObject($hAccount);
         }
