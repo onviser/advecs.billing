@@ -2,6 +2,7 @@
 require_once '../vendor/autoload.php';
 
 use Advecs\App\Config\Config;
+use Advecs\Billing\Account\System;
 use Advecs\Billing\Billing;
 use Advecs\Billing\Exception\BillingException;
 use Advecs\Billing\Exception\MySQLException;
@@ -183,6 +184,12 @@ try {
         echo " - платеж {$hPayment->getId()}: {$hPayment->getAmount()} руб." . PHP_EOL;
     }
     echo " - кол-во платежей: {$hSearchPayment->getTotal()}" . PHP_EOL;
+
+    $accountUser = $hBilling->getAccountUser($user1);
+    $accountSystem = $hBilling->getAccountSystem(System::ACCOUNT_EGRN);
+    $hBilling->addRuble($accountSystem, 1, 'пополнение системного счета');
+    $hBilling->transferRuble($accountSystem, $accountUser, 1, 'перевод с системного счета на счет пользователя');
+    $hBilling->transferRuble($accountUser, $accountSystem, 0.5, 'перевод со счета пользователя на системный счет');
 }
 catch (MySQLException $hException) {
     echo 'ошибка: ' . $hException->getMessage() . PHP_EOL;

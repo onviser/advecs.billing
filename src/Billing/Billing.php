@@ -61,6 +61,20 @@ class Billing implements BillingInterface
     }
 
     /**
+     * Системный аккаунт в биллинге
+     * @param int $id
+     * @return Account|null
+     */
+    public function getAccountSystem(int $id): ?Account
+    {
+        $hAccount = $this->hStorage->getAccount($id, Account::TYPE_SYSTEM);
+        if ($hAccount->isExist()) {
+            $hAccount->setIdExternal($id);
+        }
+        return $hAccount;
+    }
+
+    /**
      * возвращает id фирмы по аккаунту
      * @param int $account
      * @return int
